@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '../layout/LayoutComponents.vue'
-import GameWall from '../views/GameWall.vue'
+import GameWall from '../views/GameView.vue'
 import Rank from '../views/RankView.vue'
-import Discover from '../views/DiscoverView.vue'
+import Punishment from '../views/PunishmentView.vue'
 import Profile from '../views/ProfileView.vue'
 
 const router = createRouter({
@@ -31,8 +31,8 @@ const router = createRouter({
         {
           path: 'punishment',
           name: 'punishment',
-          component: Discover,
-          meta: { title: '发现' }
+          component: Punishment,
+          meta: { title: '惩罚' }
         },
         {
           path: 'profile',

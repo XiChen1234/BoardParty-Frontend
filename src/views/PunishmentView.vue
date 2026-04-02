@@ -12,7 +12,6 @@
 <style scoped>
 .discover {
   padding: 20px;
-  height: 100%;
 }
 
 h1 {

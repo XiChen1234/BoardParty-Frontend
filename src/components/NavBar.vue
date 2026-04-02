@@ -1,40 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 
-const route = useRoute()
-const router = useRouter()
-
-// 计算页面标题
-const pageTitle = computed(() => route.meta.title as string || 'BoardParty')
-
-// 计算是否显示返回按钮
-const showBackButton = computed(() => {
-  // 这里可以根据路由层级或特定路由判断是否显示返回按钮
-  // 目前简单判断：非 Tab 页面显示返回按钮
-  const tabRoutes = ['list', 'rank', 'punishment', 'profile']
-  return !tabRoutes.includes(route.name as string)
-})
-
-// 返回上一页
-const goBack = () => {
-  router.back()
-}
 </script>
 
 <template>
   <div class="nav-bar">
-    <!-- 左侧返回按钮 -->
-    <div class="nav-left" v-if="showBackButton">
-      <button class="back-button" @click="goBack">
-        &larr;
-      </button>
-    </div>
-    <div class="nav-left" v-else></div>
-
     <!-- 中间标题 -->
     <div class="nav-center">
-      <h1 class="nav-title">{{ pageTitle }}</h1>
+      <h1 class="nav-title">希晨er的桌游小圈</h1>
     </div>
 
     <!-- 右侧操作按钮 -->
@@ -46,11 +18,7 @@ const goBack = () => {
 
 <style scoped>
 .nav-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 48px;
+  height: 60px;
   background-color: var(--color-card-bg);
   display: flex;
   align-items: center;

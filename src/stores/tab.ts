@@ -7,9 +7,9 @@ const useTabStore = defineStore('tab', {
     activeTabIndex: 0,
     // Tab 配置
     tabs: [
-      { name: 'list', label: '桌游墙', icon: 'icon-list' },
-      { name: 'rank', label: '排行榜', icon: 'icon-rank' },
-      { name: 'punishment', label: '发现', icon: 'icon-punishment' },
+      { name: 'list', label: '桌游', icon: 'icon-list' },
+      { name: 'rank', label: '排行', icon: 'icon-rank' },
+      { name: 'punishment', label: '惩罚', icon: 'icon-punishment' },
       { name: 'profile', label: '我的', icon: 'icon-profile' }
     ]
   }),

@@ -35,11 +35,7 @@ onMounted(() => {
 
 <style scoped>
 .tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
+  height: 100px;
   background-color: var(--color-card-bg);
   display: flex;
   justify-content: space-around;
@@ -65,13 +61,13 @@ onMounted(() => {
 }
 
 .tab-icon {
-  font-size: 20px;
+  font-size: 30px;
   margin-bottom: 4px;
   color: var(--color-text-tertiary);
 }
 
 .tab-label {
-  font-size: 12px;
+  font-size: 16px;
   color: var(--color-text-tertiary);
 }
 

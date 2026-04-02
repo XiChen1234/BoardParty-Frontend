@@ -12,7 +12,6 @@
 <style scoped>
 .game-wall {
   padding: 20px;
-  height: 100%;
 }
 
 h1 {

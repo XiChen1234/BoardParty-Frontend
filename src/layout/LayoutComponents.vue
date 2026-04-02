@@ -36,9 +36,8 @@ const isTabPage = computed(() => {
 .layout {
   display: flex;
   flex-direction: column;
-  height: 100vh;
   width: 100%;
-  max-width: 768px;
+  height: 100vh;
   margin: 0 auto;
   background-color: var(--color-background);
 }
@@ -47,9 +46,6 @@ const isTabPage = computed(() => {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-top: 48px;
-  padding-bottom: 56px;
-  padding-bottom: calc(56px + env(safe-area-inset-bottom));
 }
 
 .fade-enter-active,
