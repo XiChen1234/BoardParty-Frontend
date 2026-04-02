@@ -1,14 +1,47 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Layout from '../layout/LayoutComponents.vue'
+import GameWall from '../views/GameWall.vue'
+import Rank from '../views/RankView.vue'
+import Discover from '../views/DiscoverView.vue'
+import Profile from '../views/ProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      redirect: '/list'
     },
+    {
+      path: '/',
+      component: Layout,
+      children: [
+        {
+          path: 'list',
+          name: 'list',
+          component: GameWall,
+          meta: { title: '桌游墙' }
+        },
+        {
+          path: 'rank',
+          name: 'rank',
+          component: Rank,
+          meta: { title: '排行榜' }
+        },
+        {
+          path: 'punishment',
+          name: 'punishment',
+          component: Discover,
+          meta: { title: '发现' }
+        },
+        {
+          path: 'profile',
+          name: 'profile',
+          component: Profile,
+          meta: { title: '我的' }
+        }
+      ]
+    }
   ],
 })
 

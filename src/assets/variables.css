@@ -1,0 +1,25 @@
+:root {
+  /* 核心主色（品牌色） */
+  --color-primary-dark: #28455A;
+  --color-primary: #3A5F7A;
+  --color-primary-light: #8BA6B8;
+  --color-primary-ultralight: #F0F4F7;
+
+  /* 辅助色（功能点缀色） */
+  --color-accent-orange: #D98859;
+  --color-accent-green: #6A9983;
+
+  /* 中性色（简约大气的核心基底） */
+  --color-background: #F8F9FA;
+  --color-card-bg: #FFFFFF;
+  --color-text-primary: #1E293B;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94A3B8;
+  --color-text-placeholder: #CBD5E1;
+  --color-border: #E2E8F0;
+
+  /* 功能色（固定场景专用） */
+  --color-danger: #C75047;
+  --color-danger-bg: #FBEAE9;
+  --color-disabled-bg: #F1F5F9;
+}

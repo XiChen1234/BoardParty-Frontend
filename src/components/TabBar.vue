@@ -1,0 +1,83 @@
+<script setup lang="ts">
+import { computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import useTabStore from '../stores/tab'
+
+const route = useRoute()
+const router = useRouter()
+const tabStore = useTabStore()
+
+// 计算当前选中的 Tab
+const currentTab = computed(() => route.name as string)
+
+// 切换 Tab
+const switchTab = (tabName: string) => {
+  router.push({ name: tabName })
+  tabStore.setActiveTabByName(tabName)
+}
+
+// 初始化 Tab 状态
+onMounted(() => {
+  tabStore.init()
+  tabStore.setActiveTabByName(currentTab.value)
+})
+</script>
+
+<template>
+  <div class="tab-bar">
+    <div v-for="tab in tabStore.tabs" :key="tab.name" class="tab-item" :class="{ active: currentTab === tab.name }"
+      @click="switchTab(tab.name)">
+      <span class="tab-icon iconfont" :class="tab.icon"></span>
+      <span class="tab-label">{{ tab.label }}</span>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-color: var(--color-card-bg);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-item:active {
+  transform: scale(0.95);
+}
+
+.tab-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+  color: var(--color-text-tertiary);
+}
+
+.tab-label {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.tab-item.active .tab-icon,
+.tab-item.active .tab-label {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+</style>
