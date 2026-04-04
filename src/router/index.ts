@@ -39,7 +39,8 @@ const router = createRouter({
           name: 'profile',
           component: Profile,
           meta: { title: '我的' }
-        }
+        },
+        // 以下是非tab页面
       ]
     }
   ],
