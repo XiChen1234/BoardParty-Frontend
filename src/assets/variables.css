@@ -1,25 +1,99 @@
 :root {
-  /* 核心主色（品牌色） */
-  --color-primary-dark: #28455A;
-  --color-primary: #3A5F7A;
-  --color-primary-light: #8BA6B8;
-  --color-primary-ultralight: #F0F4F7;
 
-  /* 辅助色（功能点缀色） */
-  --color-accent-orange: #D98859;
-  --color-accent-green: #6A9983;
+  /* ====================================
+     一、颜色资源（Palette）
+     仅用于定义颜色，不建议直接在业务代码中使用
+  ==================================== */
 
-  /* 中性色（简约大气的核心基底） */
-  --color-background: #F8F9FA;
-  --color-card-bg: #FFFFFF;
-  --color-text-primary: #1E293B;
-  --color-text-secondary: #475569;
-  --color-text-tertiary: #94A3B8;
-  --color-text-placeholder: #CBD5E1;
-  --color-border: #E2E8F0;
+  /* 主品牌蓝色系 */
+  --blue-900: #28455A;
+  --blue-700: #3A5F7A;
+  --blue-500: #5F7F99;
+  --blue-400: #8BA6B8;
+  --blue-100: #DCE6EE;
+  --blue-50: #F0F4F7;
 
-  /* 功能色（固定场景专用） */
-  --color-danger: #C75047;
-  --color-danger-bg: #FBEAE9;
-  --color-disabled-bg: #F1F5F9;
+  /* 点缀颜色 */
+  --orange-500: #D98859;
+  --green-500: #6A9983;
+
+  /* 灰度体系（界面基础色） */
+  --gray-950: #0F172A;
+  --gray-900: #1E293B;
+  --gray-700: #475569;
+  --gray-500: #64748B;
+  --gray-400: #94A3B8;
+  --gray-300: #CBD5E1;
+  --gray-200: #E2E8F0;
+  --gray-100: #F1F5F9;
+  --gray-50: #F8F9FA;
+  --gray-0: #ffffff;
+
+  /* 状态颜色 */
+  --red-500: #C75047;
+  --red-100: #FBEAE9;
+
+  /* ====================================
+     二、语义变量（Semantic）
+     页面开发时主要使用这一层变量
+  ==================================== */
+
+  /* 主品牌色 */
+  --color-primary: var(--blue-700);
+  --color-primary-hover: var(--blue-900);
+  --color-primary-soft: var(--blue-50);
+  --color-primary-border: var(--blue-100);
+
+  /* 功能点缀色 */
+  --color-accent: var(--orange-500);
+  --color-success: var(--green-500);
+
+  /* 页面背景 */
+  --color-bg-page: var(--gray-50);
+  --color-bg-card: var(--gray-0);
+  --color-bg-soft: var(--gray-100);
+  --color-bg-hover: var(--blue-50);
+
+  /* 文字颜色 */
+  --color-text-primary: var(--gray-900);
+  --color-text-secondary: var(--gray-700);
+  --color-text-tertiary: var(--gray-500);
+  --color-text-placeholder: var(--gray-300);
+  --color-text-inverse: var(--gray-0);
+
+  /* 边框 */
+  --color-border: var(--gray-200);
+  --color-border-soft: var(--gray-100);
+
+  /* 状态颜色 */
+  --color-danger: var(--red-500);
+  --color-danger-bg: var(--red-100);
+
+  /* 交互状态 */
+  --color-focus-ring: var(--blue-400);
+  --color-focus-bg: var(--gray-100);
+
+  /* ====================================
+     三、组件变量（Component）
+     常见组件的默认样式变量
+  ==================================== */
+
+  /* 卡片组件 */
+  --card-bg: var(--color-bg-card);
+  --card-border: var(--color-border);
+  --card-radius: 12px;
+
+  /* 按钮组件 */
+  --button-primary-bg: var(--color-primary);
+  --button-primary-hover: var(--color-primary-hover);
+  --button-primary-text: var(--color-text-inverse);
+
+  /* 输入框组件 */
+  --input-bg: var(--gray-0);
+  --input-border: var(--color-border);
+  --input-focus-border: var(--color-primary);
+
+  /* 标签组件 */
+  --tag-bg: var(--color-bg-soft);
+  --tag-text: var(--color-text-secondary);
 }
