@@ -79,14 +79,4 @@ const goBack = () => {
   font-weight: 500;
   color: var(--color-text-primary);
 }
-
-@media (min-width: 768px) {
-  .nav-bar {
-    height: 100px;
-  }
-
-  .nav-title {
-    font-size: 32px;
-  }
-}
 </style>

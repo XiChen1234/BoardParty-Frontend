@@ -6,7 +6,6 @@
   <div class="game-page">
     <!-- 头部 -->
     <div class="header">
-      <h1 class="title">桌游墙</h1>
       <div class="search">
         <i class="iconfont icon-search"></i>
         <input type="text" placeholder="搜索你感兴趣的桌游">
@@ -49,14 +48,6 @@
   padding: 8px 12px;
   background: var(--color-bg-card);
   border-bottom: 1px solid var(--color-border);
-}
-
-.title {
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin: 0;
-  white-space: nowrap;
 }
 
 .search {
@@ -146,12 +137,5 @@
 
 .condition-list .condition-item .delete:hover {
   color: var(--color-danger);
-}
-
-
-@media screen and (max-width: 767px) {
-  .title {
-    display: none;
-  }
 }
 </style>
