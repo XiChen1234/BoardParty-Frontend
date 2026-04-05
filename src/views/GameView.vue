@@ -46,7 +46,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 8px 12px;
   background: var(--color-bg-card);
   border-bottom: 1px solid var(--color-border);
 }
