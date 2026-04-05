@@ -10,6 +10,8 @@
   --blue-700: #3A5F7A;
   --blue-500: #5F7F99;
   --blue-400: #8BA6B8;
+  --blue-300: #A6C1D4;
+  --blue-200: #C4D9E8;
   --blue-100: #DCE6EE;
   --blue-50: #F0F4F7;
 
@@ -40,7 +42,7 @@
 
   /* 主品牌色 */
   --color-primary: var(--blue-700);
-  --color-primary-hover: var(--blue-400);
+  --color-primary-hover: var(--blue-300);
   --color-primary-soft: var(--blue-50);
   --color-primary-border: var(--blue-100);
 

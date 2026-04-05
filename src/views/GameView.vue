@@ -10,8 +10,10 @@
         <i class="iconfont icon-search"></i>
         <input type="text" placeholder="搜索你感兴趣的桌游">
       </div>
-      <div class="filter">
+      <div class="features">
         <i class="iconfont icon-filter"></i>
+        <i class="iconfont icon-waterfall"></i>
+        <i class="iconfont icon-grid"></i>
       </div>
     </div>
     <!-- 已选择的条件列表 -->
@@ -86,25 +88,23 @@
   color: var(--color-text-placeholder);
 }
 
-.filter {
+.features {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: var(--color-primary-soft);
-  border-radius: 10px;
+  gap: 8px;
+}
+
+.features .iconfont {
+  font-size: 24px;
+  padding: 5px;
+}
+
+.features .iconfont:hover {
+  background-color: var(--color-primary-hover);
+  color: var(--color-text-inverse);
+  border-radius: 5px;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.filter:hover {
-  background: var(--color-primary-border);
-}
-
-.filter .iconfont {
-  font-size: 18px;
-  color: var(--color-primary);
 }
 
 .condition-list {
