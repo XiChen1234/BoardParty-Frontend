@@ -16,6 +16,20 @@
       </div>
     </div>
     <!-- 已选择的条件列表 -->
+    <div class="condition-list">
+      <div class="condition-item">
+        <div class="label">2-4人</div>
+        <div class="delete">×</div>
+      </div>
+      <div class="condition-item">
+        <div class="label">策略</div>
+        <div class="delete">×</div>
+      </div>
+      <div class="condition-item">
+        <div class="label">简单</div>
+        <div class="delete">×</div>
+      </div>
+    </div>
     <!-- 显示方式（瀑布流、网格流） -->
     <!-- 桌游列表 -->
     <!-- 选择条件panel -->
@@ -35,9 +49,6 @@
   padding: 16px 20px;
   background: var(--color-bg-card);
   border-bottom: 1px solid var(--color-border);
-  position: sticky;
-  top: 0;
-  z-index: 100;
 }
 
 .title {
@@ -104,6 +115,39 @@
   font-size: 18px;
   color: var(--color-primary);
 }
+
+.condition-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg-card);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.condition-list .condition-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-bg-soft);
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
+.condition-list .condition-item:hover {
+  background: var(--color-primary-hover);
+  color: var(--color-text-inverse);
+}
+
+.condition-list .condition-item .delete {
+  cursor: pointer;
+}
+
+.condition-list .condition-item .delete:hover {
+  color: var(--color-danger);
+}
+
 
 @media screen and (max-width: 767px) {
   .title {

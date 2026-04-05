@@ -40,7 +40,7 @@
 
   /* 主品牌色 */
   --color-primary: var(--blue-700);
-  --color-primary-hover: var(--blue-900);
+  --color-primary-hover: var(--blue-400);
   --color-primary-soft: var(--blue-50);
   --color-primary-border: var(--blue-100);
 
