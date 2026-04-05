@@ -31,8 +31,273 @@
         <div class="delete">×</div>
       </div>
     </div>
-    <!-- 显示方式（瀑布流、网格流） -->
     <!-- 桌游列表 -->
+    <div class="game-list">
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="card-image">
+          <img src="/public/games/avalon.jpg" alt="桌游图片">
+        </div>
+        <div class="card-content">
+          <div class="card-header">
+            <h3 class="card-title">阿瓦隆阿瓦隆阿瓦隆阿瓦隆</h3>
+            <div class="card-rating">
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-full"></i>
+              <i class="iconfont icon-star-half"></i>
+              <i class="iconfont icon-star-empty"></i>
+            </div>
+          </div>
+          <div class="card-tags">
+            <span class="tag">策略</span>
+            <span class="tag">2-10人</span>
+            <span class="tag">简单</span>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- 选择条件panel -->
 
   </div>
@@ -137,5 +402,86 @@
 
 .condition-list .condition-item .delete:hover {
   color: var(--color-danger);
+}
+
+.game-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  padding: 12px;
+  background: var(--color-bg-page);
+}
+
+.game-card {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  border: 1px solid var(--card-border);
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100px;
+  overflow: hidden;
+  background: var(--color-bg-soft);
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 10px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.card-title {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.card-rating .iconfont {
+  font-size: 10px;
+  color: var(--color-accent);
+}
+
+.card-rating .iconfont.icon-star-empty {
+  color: var(--gray-300);
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.card-tags .tag {
+  padding: 2px 6px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 500;
 }
 </style>
