@@ -36,7 +36,7 @@ onMounted(() => {
 <style scoped>
 .tab-bar {
   height: 100px;
-  background-color: var(--color-card-bg);
+  background-color: var(--color-bg-card);
   display: flex;
   justify-content: space-around;
   align-items: center;

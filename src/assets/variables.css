@@ -49,7 +49,8 @@
   --color-success: var(--green-500);
 
   /* 页面背景 */
-  --color-bg-page: var(--gray-50);
+  --color-bg: var(--gray-200);
+  --color-bg-page: var(--gray-100);
   --color-bg-card: var(--gray-0);
   --color-bg-soft: var(--gray-100);
   --color-bg-hover: var(--blue-50);

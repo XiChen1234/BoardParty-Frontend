@@ -48,7 +48,7 @@ const goBack = () => {
 <style scoped>
 .nav-bar {
   height: 60px;
-  background-color: var(--color-card-bg);
+  background-color: var(--color-bg-card);
   display: flex;
   align-items: center;
   justify-content: center;

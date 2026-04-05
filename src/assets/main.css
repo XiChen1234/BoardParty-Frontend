@@ -2,6 +2,7 @@
 
 #app {
   font-weight: normal;
+  background-color: var(--color-bg);
 }
 
 @media (hover: hover) {

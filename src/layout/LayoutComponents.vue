@@ -39,12 +39,14 @@ const isTabPage = computed(() => {
   width: 100%;
   height: 100vh;
   margin: 0 auto;
-  background-color: var(--color-background);
 }
 
 .content {
   flex: 1;
   overflow-y: auto;
+  max-width: 768px;
+  margin: 0 auto;
+  background-color: var(--color-bg-page);
   -webkit-overflow-scrolling: touch;
 }
 
