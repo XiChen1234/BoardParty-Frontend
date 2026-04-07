@@ -3,18 +3,73 @@ import { ref, computed } from 'vue'
 import type { Tag, Condition } from '@/types/game-type'
 import { gameList, tagList } from '@/data/game'
 
+/* ====================================
+   常量定义
+   ==================================== */
+
+/**
+ * 筛选条件类型枚举
+ */
+const ConditionType = {
+  PLAYER_COUNT: 'playerCount',
+  PLAYER_RANGE: 'playerRange',
+  DURATION: 'duration',
+  TAG: 'tag',
+  SEARCH: 'search'
+} as const
+
+/**
+ * 玩家人数范围选项配置
+ */
+const playerRangeOptions = [
+  { label: '全部', value: 'all' },
+  { label: '2-4人', value: '2-4', min: 2, max: 4 },
+  { label: '5-8人', value: '5-8', min: 5, max: 8 },
+  { label: '9人以上', value: '9+', min: 9, max: Infinity }
+]
+
+/**
+ * 持续时间选项配置
+ */
+const durationOptions = [
+  { label: '全部', value: 'all' },
+  { label: '30分钟以内', value: '<30', min: 0, max: 30 },
+  { label: '30-60分钟', value: '30-60', min: 30, max: 60 },
+  { label: '60分钟以上', value: '>60', min: 60, max: Infinity }
+]
+
+/* ====================================
+   状态定义
+   ==================================== */
+
 // 控制列表模式：瀑布流、列表
 const listMode = ref('waterfall')
 
-/* ====================================
-   条件列表管理
-   ==================================== */
+// 条件列表 - 存储所有筛选条件
 const conditionList = ref<Condition[]>([])
-const playerCountValue = ref('') // 玩家人数输入框的值
+
+// 搜索关键词
+const searchKeyword = ref('')
+
+// 玩家人数输入框的值（使用number类型避免类型转换）
+const playerCountValue = ref<number | null>(null)
+
+// 条件面板显示状态
+const isConditionPanelVisible = ref(false)
+
+// 游戏列表数据，从后端获取
+const games = computed(() => gameList.value)
+
+// 标签选项，从后端获取
+const tagOptions = computed(() => tagList.value)
+
+/* ====================================
+   条件管理函数
+   ==================================== */
 
 /**
  * 根据条件类型获取条件对象
- * @param type 条件类型
+ * @param type - 条件类型
  * @returns 条件对象或undefined
  */
 const getConditionByType = (type: Condition['type']): Condition | undefined => {
@@ -23,8 +78,8 @@ const getConditionByType = (type: Condition['type']): Condition | undefined => {
 
 /**
  * 判断某种类型的条件是否存在
- * @param type 条件类型
- * @param value 可选的条件值
+ * @param type - 条件类型
+ * @param value - 可选的条件值
  * @returns 是否存在
  */
 const hasCondition = (type: Condition['type'], value?: string | number): boolean => {
@@ -37,59 +92,79 @@ const hasCondition = (type: Condition['type'], value?: string | number): boolean
 
 /**
  * 添加条件到条件列表
- * @param condition 条件对象
+ * @param condition - 条件对象
  */
 const addCondition = (condition: Condition) => {
   conditionList.value.push(condition)
 }
 
 /**
- * 根据条件类型和值移除条件，如果未指定值，则移除所有该类型的条件
- * @param type 条件类型
- * @param value 条件值
+ * 移除指定类型的全部条件（使用filter避免循环删除的索引问题）
+ * @param type - 条件类型
  */
-const removeCondition = (type: Condition['type'], value?: string | number) => {
-  for (let i = 0; i < conditionList.value.length; i++) {
-    const condition = conditionList.value[i]
-    if (condition && condition.type === type) {
-      if (value === undefined || condition.value === value) {
-        conditionList.value.splice(i, 1)
-      }
-    }
-  }
+const removeConditionsByType = (type: Condition['type']) => {
+  conditionList.value = conditionList.value.filter(c => c.type !== type)
 }
 
 /**
- * 清除所有条件
+ * 根据条件类型和值移除条件
+ * @param type - 条件类型
+ * @param value - 条件值
+ */
+const removeCondition = (type: Condition['type'], value?: string | number) => {
+  conditionList.value = conditionList.value.filter(c => {
+    if (c.type !== type) return true
+    if (value !== undefined && c.value !== value) return true
+    return false
+  })
+}
+
+/**
+ * 清除所有条件和重置状态
+ * 包括：条件列表、搜索关键词、玩家人数输入框
  */
 const clearAllConditions = () => {
   conditionList.value = []
+  searchKeyword.value = ''
+  playerCountValue.value = null
+}
+
+/* ====================================
+   标签显示文本映射
+   ==================================== */
+
+/**
+ * 玩家人数范围的显示标签映射
+ */
+const playerRangeLabels: Record<string, string> = {
+  '2-4': '2-4人',
+  '5-8': '5-8人',
+  '9+': '9人以上'
 }
 
 /**
- * 获取条件列表的标签显示文本
- * @param condition 条件对象
- * @returns 显示文本
+ * 持续时间的显示标签映射
+ */
+const durationLabels: Record<string, string> = {
+  '<30': '30分钟以内',
+  '30-60': '30-60分钟',
+  '>60': '60分钟以上'
+}
+
+/**
+ * 获取条件列表项的显示文本
+ * @param condition - 条件对象
+ * @returns 格式化的显示文本
  */
 const getConditionLabel = (condition: Condition): string => {
   switch (condition.type) {
-    case 'playerCount':
+    case ConditionType.PLAYER_COUNT:
       return `${condition.value}人`
-    case 'playerRange':
-      const rangeLabels: Record<string, string> = {
-        '2-4': '2-4人',
-        '5-8': '5-8人',
-        '9+': '9人以上'
-      }
-      return rangeLabels[condition.value as string] || ''
-    case 'duration':
-      const durationLabels: Record<string, string> = {
-        '<30': '30分钟以内',
-        '30-60': '30-60分钟',
-        '>60': '60分钟以上'
-      }
+    case ConditionType.PLAYER_RANGE:
+      return playerRangeLabels[condition.value as string] || ''
+    case ConditionType.DURATION:
       return durationLabels[condition.value as string] || ''
-    case 'tag':
+    case ConditionType.TAG:
       return condition.label
     default:
       return ''
@@ -97,168 +172,183 @@ const getConditionLabel = (condition: Condition): string => {
 }
 
 /* ====================================
-   条件面板显示状态
-   ==================================== */
-const isConditionPanelVisible = ref(false)
-
-const games = computed(() => gameList.value)
-
-/* ====================================
-   筛选选项配置
-   ==================================== */
-const playerRangeOptions = [
-  { label: '全部', value: 'all' },
-  { label: '2-4人', value: '2-4' },
-  { label: '5-8人', value: '5-8' },
-  { label: '9人以上', value: '9+' }
-]
-
-const durationOptions = [
-  { label: '全部', value: 'all' },
-  { label: '30分钟以内', value: '<30' },
-  { label: '30-60分钟', value: '30-60' },
-  { label: '60分钟以上', value: '>60' }
-]
-
-const tagOptions = computed(() => tagList.value)
-
-/* ====================================
    筛选操作函数
    ==================================== */
 
 /**
  * 玩家人数输入框改变时的回调处理
+ * 输入值会同时添加到conditionList中进行筛选
  */
 const handlePlayerCountInput = () => {
-  const value = parseInt(playerCountValue.value, 10)
+  // 移除可能存在的范围条件（输入框和范围选项互斥）
+  removeConditionsByType(ConditionType.PLAYER_RANGE)
 
-  if (value > 0) {
-    removeCondition('playerRange')
-    removeCondition('playerCount')
-    addCondition({ type: 'playerCount', label: `${value}人`, value })
+  if (playerCountValue.value !== null && playerCountValue.value > 0) {
+    removeConditionsByType(ConditionType.PLAYER_COUNT)
+    addCondition({
+      type: ConditionType.PLAYER_COUNT,
+      label: `${playerCountValue.value}人`,
+      value: playerCountValue.value
+    })
   } else {
-    removeCondition('playerCount')
+    removeConditionsByType(ConditionType.PLAYER_COUNT)
   }
 }
 
 /**
  * 玩家人数范围快捷选项点击处理
- * @param value 范围值
+ * 点击时会清除输入框的内容
+ * @param value - 范围值
  */
 const handlePlayerRangeClick = (value: string) => {
   // 清除input输入框
-  playerCountValue.value = ''
+  playerCountValue.value = null
+
   if (value === 'all') {
-    removeCondition('playerRange')
-    removeCondition('playerCount')
+    removeConditionsByType(ConditionType.PLAYER_RANGE)
+    removeConditionsByType(ConditionType.PLAYER_COUNT)
   } else {
-    removeCondition('playerCount')
-    removeCondition('playerRange')
-    const labels: Record<string, string> = {
-      '2-4': '2-4人',
-      '5-8': '5-8人',
-      '9+': '9人以上'
-    }
-    addCondition({ type: 'playerRange', label: labels[value] || value, value })
+    removeConditionsByType(ConditionType.PLAYER_COUNT)
+    removeConditionsByType(ConditionType.PLAYER_RANGE)
+    addCondition({
+      type: ConditionType.PLAYER_RANGE,
+      label: playerRangeLabels[value] || value,
+      value
+    })
   }
 }
 
 /**
  * 持续时间筛选改变时的处理
- * @param value 持续时间值
+ * @param value - 持续时间值
  */
 const handleDurationClick = (value: string) => {
   if (value === 'all') {
-    removeCondition('duration')
+    removeConditionsByType(ConditionType.DURATION)
   } else {
-    removeCondition('duration')
-    const labels: Record<string, string> = {
-      '<30': '30分钟以内',
-      '30-60': '30-60分钟',
-      '>60': '60分钟以上'
-    }
-    addCondition({ type: 'duration', label: labels[value] || value, value })
+    removeConditionsByType(ConditionType.DURATION)
+    addCondition({
+      type: ConditionType.DURATION,
+      label: durationLabels[value] || value,
+      value
+    })
   }
 }
 
 /**
- * 标签筛选改变时的处理
- * @param tag 标签对象
+ * 标签筛选改变时的处理（多选）
+ * @param tag - 标签对象
  */
 const handleTagClick = (tag: Tag) => {
   const tagName = tag.name
-  if (hasCondition('tag', tagName)) {
-    removeCondition('tag', tagName)
+  if (hasCondition(ConditionType.TAG, tagName)) {
+    removeCondition(ConditionType.TAG, tagName)
   } else {
-    addCondition({ type: 'tag', label: tagName, value: tagName })
+    addCondition({
+      type: ConditionType.TAG,
+      label: tagName,
+      value: tagName
+    })
   }
 }
 
 /**
  * 判断标签是否被选中
- * @param tag 标签对象
+ * @param tag - 标签对象
  * @returns 是否选中
  */
 const isTagSelected = (tag: Tag): boolean => {
-  return hasCondition('tag', tag.name)
+  return hasCondition(ConditionType.TAG, tag.name)
 }
 
 /* ====================================
    筛选结果计算
    ==================================== */
 
+/**
+ * 根据玩家人数条件判断游戏是否匹配
+ * @param game - 游戏对象
+ * @returns 是否匹配
+ */
+const matchPlayerCondition = (game: { minPlayer: number; maxPlayer: number }): boolean => {
+  // 优先检查精确人数条件
+  const playerCondition = getConditionByType(ConditionType.PLAYER_COUNT)
+  if (playerCondition) {
+    const count = playerCondition.value as number
+    return game.minPlayer <= count && game.maxPlayer >= count
+  }
+
+  // 其次检查范围条件
+  const rangeCondition = getConditionByType(ConditionType.PLAYER_RANGE)
+  if (rangeCondition) {
+    const range = rangeCondition.value as string
+    const rangeOption = playerRangeOptions.find(opt => opt.value === range)
+    if (rangeOption && 'min' in rangeOption && 'max' in rangeOption) {
+      return game.maxPlayer >= (rangeOption.min ?? 0) && game.minPlayer <= (rangeOption.max ?? Infinity)
+    }
+  }
+
+  return true
+}
+
+/**
+ * 根据持续时间条件判断游戏是否匹配
+ * @param game - 游戏对象
+ * @returns 是否匹配
+ */
+const matchDurationCondition = (game: { duration?: number }): boolean => {
+  const durationCondition = getConditionByType(ConditionType.DURATION)
+  if (!durationCondition || !game.duration) return true
+
+  const dur = game.duration
+  const durValue = durationCondition.value as string
+  const durationOption = durationOptions.find(opt => opt.value === durValue)
+
+  if (durationOption && 'min' in durationOption && 'max' in durationOption) {
+    return dur >= (durationOption.min ?? 0) && dur < (durationOption.max ?? Infinity)
+  }
+
+  return true
+}
+
+/**
+ * 根据标签条件判断游戏是否匹配
+ * 要求游戏包含所有选中的标签（且的关系）
+ * @param game - 游戏对象
+ * @returns 是否匹配
+ */
+const matchTagCondition = (game: { tags: { name: string }[] }): boolean => {
+  const tagConditions = conditionList.value.filter(c => c.type === ConditionType.TAG)
+  if (tagConditions.length === 0) return true
+
+  const gameTagNames = game.tags.map(t => t.name)
+  return tagConditions.every(tagCond => gameTagNames.includes(tagCond.value as string))
+}
+
+/**
+ * 根据搜索关键词判断游戏是否匹配
+ * 支持游戏名称模糊匹配（忽略大小写）
+ * @param game - 游戏对象
+ * @returns 是否匹配
+ */
+const matchSearchCondition = (game: { name: string }): boolean => {
+  if (!searchKeyword.value.trim()) return true
+  const keyword = searchKeyword.value.toLowerCase().trim()
+  return game.name.toLowerCase().includes(keyword)
+}
+
+/**
+ * 筛选后的游戏列表
+ * 使用组合模式，将各条件判断逻辑分离为独立函数
+ */
 const filteredGames = computed(() => {
   return games.value.filter(game => {
-    // 玩家人数筛选（输入框优先于快捷选项）
-    const playerCondition = getConditionByType('playerCount')
-    if (playerCondition) {
-      const count = playerCondition.value as number
-      if (game.minPlayer > count || game.maxPlayer < count) {
-        return false
-      }
-    } else {
-      const rangeCondition = getConditionByType('playerRange')
-      if (rangeCondition) {
-        const range = rangeCondition.value as string
-        if (range === '2-4' && (game.minPlayer < 2 || game.maxPlayer > 4)) {
-          return false
-        }
-        if (range === '5-8' && (game.minPlayer < 5 || game.maxPlayer > 8)) {
-          return false
-        }
-        if (range === '9+' && game.maxPlayer < 9) {
-          return false
-        }
-      }
-    }
-
-    // 持续时间筛选
-    const durationCondition = getConditionByType('duration')
-    if (durationCondition && game.duration) {
-      const dur = game.duration
-      const durValue = durationCondition.value as string
-      if (durValue === '<30' && dur >= 30) {
-        return false
-      }
-      if (durValue === '30-60' && (dur < 30 || dur > 60)) {
-        return false
-      }
-      if (durValue === '>60' && dur <= 60) {
-        return false
-      }
-    }
-
-    // 标签筛选（且的关系）
-    const tagConditions = conditionList.value.filter(c => c.type === 'tag')
-    if (tagConditions.length > 0) {
-      const gameTagNames = game.tags.map(t => t.name)
-      const hasAllTags = tagConditions.every(tagCond => gameTagNames.includes(tagCond.value as string))
-      if (!hasAllTags) {
-        return false
-      }
-    }
-
-    return true
+    return (
+      matchPlayerCondition(game) &&
+      matchDurationCondition(game) &&
+      matchTagCondition(game) &&
+      matchSearchCondition(game)
+    )
   })
 })
 
@@ -267,9 +357,10 @@ const filteredGames = computed(() => {
    ==================================== */
 
 /**
- * 将评分转换为星数
- * @param score 评分
- * @returns 星数
+ * 将评分转换为星数显示
+ * 评分范围0-10，转换为5颗星（满星、半星、空星）
+ * @param score - 游戏评分（0-10）
+ * @returns 包含满星、半星、空星数量的对象
  */
 const scoreToStars = (score: number) => ({
   full: Math.floor(score / 2),
@@ -284,7 +375,7 @@ const scoreToStars = (score: number) => ({
     <div class="top-header">
       <div class="search">
         <i class="iconfont icon-search"></i>
-        <input type="text" placeholder="搜索你感兴趣的桌游">
+        <input v-model="searchKeyword" type="text" placeholder="搜索你感兴趣的桌游" />
       </div>
       <div class="features">
         <i class="iconfont icon-filter" @click="isConditionPanelVisible = !isConditionPanelVisible"></i>
@@ -364,7 +455,7 @@ const scoreToStars = (score: number) => ({
             </div>
             <div class="filter-options">
               <span v-for="option in playerRangeOptions" :key="option.value" class="filter-option"
-                :class="{ active: hasCondition('playerRange', option.value) || (option.value === 'all' && !hasCondition('playerCount') && !hasCondition('playerRange')) }"
+                :class="{ active: hasCondition(ConditionType.PLAYER_RANGE, option.value) || (option.value === 'all' && !hasCondition(ConditionType.PLAYER_COUNT) && !hasCondition(ConditionType.PLAYER_RANGE)) }"
                 @click="handlePlayerRangeClick(option.value)">{{ option.label }}</span>
             </div>
           </div>
@@ -373,7 +464,7 @@ const scoreToStars = (score: number) => ({
             <div class="filter-label">持续时间</div>
             <div class="filter-options">
               <span v-for="option in durationOptions" :key="option.value" class="filter-option"
-                :class="{ active: hasCondition('duration', option.value) || (option.value === 'all' && !hasCondition('duration')) }"
+                :class="{ active: hasCondition(ConditionType.DURATION, option.value) || (option.value === 'all' && !hasCondition(ConditionType.DURATION)) }"
                 @click="handleDurationClick(option.value)">{{ option.label }}</span>
             </div>
           </div>
