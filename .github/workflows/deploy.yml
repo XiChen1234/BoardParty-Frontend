@@ -42,7 +42,7 @@ jobs:
           ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
           # 确保远程目录存在（用户 home 下）
-          ssh -i ~/.ssh/id_rsa "$SERVER_USER@$SERVER_HOST" "mkdir -p ~/app/board-party/frontend"
+          ssh -i ~/.ssh/id_rsa "$SERVER_USER@$SERVER_HOST" "mkdir -p ~/board-party/frontend"
 
           # 同步前端构建文件
-          rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa" ./dist/ "$SERVER_USER@$SERVER_HOST":~/app/board-party/frontend/
+          rsync -avz --delete -e "ssh -i ~/.ssh/id_rsa" ./dist/ "$SERVER_USER@$SERVER_HOST":~/board-party/frontend/
