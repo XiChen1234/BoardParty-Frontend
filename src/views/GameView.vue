@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import type { Tag, Condition } from '@/types/game-type'
-import { gameList, tagList } from '@/data/game'
+import { ref, computed, onMounted } from 'vue'
+import type { Game, Tag, Condition } from '@/types/game-type'
+import { fetchGames, extractTagsFromGames } from '@/api/game'
 
 /* ====================================
    常量定义
@@ -14,8 +14,7 @@ const ConditionType = {
   PLAYER_COUNT: 'playerCount',
   PLAYER_RANGE: 'playerRange',
   DURATION: 'duration',
-  TAG: 'tag',
-  SEARCH: 'search'
+  TAG: 'tag'
 } as const
 
 /**
@@ -58,10 +57,48 @@ const playerCountValue = ref<number | null>(null)
 const isConditionPanelVisible = ref(false)
 
 // 游戏列表数据，从后端获取
-const games = computed(() => gameList.value)
+const gameList = ref<Game[]>([])
 
 // 标签选项，从后端获取
+const tagList = ref<Tag[]>([])
+
+// 加载状态
+const isLoading = ref(false)
+
+// 错误信息
+const errorMessage = ref('')
+
+// 游戏列表数据
+const games = computed(() => gameList.value)
+
+// 标签选项
 const tagOptions = computed(() => tagList.value)
+
+/* ====================================
+   数据获取
+   ==================================== */
+
+/**
+ * 从后端获取游戏列表和标签
+ */
+const loadGameData = async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+  try {
+    const data = await fetchGames()
+    gameList.value = data
+    tagList.value = extractTagsFromGames(data)
+  } catch (error) {
+    errorMessage.value = error instanceof Error ? error.message : '获取游戏数据失败'
+    console.error('获取游戏数据失败:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  loadGameData()
+})
 
 /* ====================================
    条件管理函数
@@ -342,7 +379,7 @@ const matchSearchCondition = (game: { name: string }): boolean => {
  * 使用组合模式，将各条件判断逻辑分离为独立函数
  */
 const filteredGames = computed(() => {
-  return games.value.filter(game => {
+  return games.value.filter((game: Game) => {
     return (
       matchPlayerCondition(game) &&
       matchDurationCondition(game) &&
@@ -371,121 +408,192 @@ const scoreToStars = (score: number) => ({
 
 <template>
   <div class="game-page">
-    <!-- 头部 -->
-    <div class="top-header">
-      <div class="search">
-        <i class="iconfont icon-search"></i>
-        <input v-model="searchKeyword" type="text" placeholder="搜索你感兴趣的桌游" />
-      </div>
-      <div class="features">
-        <i class="iconfont icon-filter" @click="isConditionPanelVisible = !isConditionPanelVisible"></i>
-        <i class="iconfont icon-waterfall" v-if="listMode === 'waterfall'" @click="listMode = 'grid'"></i>
-        <i class="iconfont icon-grid" v-else-if="listMode === 'grid'" @click="listMode = 'waterfall'"></i>
-      </div>
+    <!-- 加载状态 -->
+    <div v-if="isLoading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">加载中...</div>
     </div>
-    <!-- 已选择的条件列表 -->
-    <div class="condition-list" v-if="conditionList.length > 0">
-      <div v-for="item in conditionList" :key="item.type + '-' + item.value" class="condition-item">
-        <div class="label">{{ getConditionLabel(item) }}</div>
-        <div class="delete" @click="removeCondition(item.type, item.value)">×</div>
-      </div>
-      <div class="clear-all" @click="clearAllConditions" v-if="conditionList.length > 1">清除全部</div>
+    <!-- 错误状态 -->
+    <div v-else-if="errorMessage" class="error-state">
+      <div class="error-message">{{ errorMessage }}</div>
+      <button class="retry-btn" @click="loadGameData">重试</button>
     </div>
-    <!-- 桌游列表 -->
-    <div class="game-list grid" v-if="listMode === 'grid'">
-      <div class="game-item" v-for="game in filteredGames" :key="game.id">
-        <div class="image">
-          <img :src="game.icon" :alt="game.name">
+    <!-- 正常内容 -->
+    <template v-else>
+      <!-- 头部 -->
+      <div class="top-header">
+        <div class="search">
+          <i class="iconfont icon-search"></i>
+          <input v-model="searchKeyword" type="text" placeholder="搜索你感兴趣的桌游" />
         </div>
-        <div class="content">
-          <div class="header">
-            <h3 class="title">{{ game.name }}</h3>
-            <div class="rating">
-              <i class="iconfont icon-star-full" v-for="i in scoreToStars(game.star).full" :key="i"></i>
-              <i class="iconfont icon-star-half" v-for="i in scoreToStars(game.star).half" :key="i"></i>
-              <i class="iconfont icon-star-empty" v-for="i in scoreToStars(game.star).empty" :key="i"></i>
-            </div>
-          </div>
-          <div class="tags">
-            <span class="tag" v-for="tag in game.tags" :key="tag.id">{{ tag.name }}</span>
-            <span class="tag">{{ game.minPlayer }}-{{ game.maxPlayer }}人</span>
-          </div>
+        <div class="features">
+          <i class="iconfont icon-filter" @click="isConditionPanelVisible = !isConditionPanelVisible"></i>
+          <i class="iconfont icon-waterfall" v-if="listMode === 'waterfall'" @click="listMode = 'grid'"></i>
+          <i class="iconfont icon-grid" v-else-if="listMode === 'grid'" @click="listMode = 'waterfall'"></i>
         </div>
       </div>
-    </div>
-    <div class="game-list waterfall" v-else>
-      <div class="game-item" v-for="game in filteredGames" :key="game.id">
-        <div class="image">
-          <img :src="game.icon" :alt="game.name">
+      <!-- 已选择的条件列表 -->
+      <div class="condition-list" v-if="conditionList.length > 0">
+        <div v-for="item in conditionList" :key="item.type + '-' + item.value" class="condition-item">
+          <div class="label">{{ getConditionLabel(item) }}</div>
+          <div class="delete" @click="removeCondition(item.type, item.value)">×</div>
         </div>
-        <div class="content">
-          <div class="header">
-            <h3 class="title">{{ game.name }}</h3>
-            <div class="rating">
-              <i class="iconfont icon-star-full" v-for="i in scoreToStars(game.star).full" :key="i"></i>
-              <i class="iconfont icon-star-half" v-for="i in scoreToStars(game.star).half" :key="i"></i>
-              <i class="iconfont icon-star-empty" v-for="i in scoreToStars(game.star).empty" :key="i"></i>
-            </div>
-          </div>
-          <div class="tags">
-            <span class="tag" v-for="tag in game.tags" :key="tag.id">{{ tag.name }}</span>
-          </div>
-          <div class="description">
-            <p>{{ game.description }}</p>
-          </div>
-        </div>
+        <div class="clear-all" @click="clearAllConditions" v-if="conditionList.length > 1">清除全部</div>
       </div>
-    </div>
-    <!-- 选择条件panel -->
-    <div class="condition-panel" v-if="isConditionPanelVisible">
-      <div class="panel-overlay" @click="isConditionPanelVisible = false"></div>
-      <div class="panel">
-        <div class="panel-header">
-          <h3 class="panel-title">筛选条件</h3>
-          <i class="iconfont icon-close panel-close" @click="isConditionPanelVisible = false"></i>
-        </div>
-        <div class="panel-content">
-          <!-- 玩家人数筛选 -->
-          <div class="filter-group">
-            <div class="filter-label">玩家人数</div>
-            <div class="player-count-input">
-              <input v-model="playerCountValue" type="number" placeholder="输入人数" min="1"
-                @input="handlePlayerCountInput" />
-              <span class="input-suffix">人</span>
-            </div>
-            <div class="filter-options">
-              <span v-for="option in playerRangeOptions" :key="option.value" class="filter-option"
-                :class="{ active: hasCondition(ConditionType.PLAYER_RANGE, option.value) || (option.value === 'all' && !hasCondition(ConditionType.PLAYER_COUNT) && !hasCondition(ConditionType.PLAYER_RANGE)) }"
-                @click="handlePlayerRangeClick(option.value)">{{ option.label }}</span>
-            </div>
+      <!-- 桌游列表 -->
+      <div class="game-list grid" v-if="listMode === 'grid'">
+        <div class="game-item" v-for="game in filteredGames" :key="game.id">
+          <div class="image">
+            <img :src="game.icon" :alt="game.name">
           </div>
-          <!-- 持续时间筛选 -->
-          <div class="filter-group">
-            <div class="filter-label">持续时间</div>
-            <div class="filter-options">
-              <span v-for="option in durationOptions" :key="option.value" class="filter-option"
-                :class="{ active: hasCondition(ConditionType.DURATION, option.value) || (option.value === 'all' && !hasCondition(ConditionType.DURATION)) }"
-                @click="handleDurationClick(option.value)">{{ option.label }}</span>
+          <div class="content">
+            <div class="header">
+              <h3 class="title">{{ game.name }}</h3>
+              <div class="rating">
+                <i class="iconfont icon-star-full" v-for="i in scoreToStars(game.star).full" :key="i"></i>
+                <i class="iconfont icon-star-half" v-for="i in scoreToStars(game.star).half" :key="i"></i>
+                <i class="iconfont icon-star-empty" v-for="i in scoreToStars(game.star).empty" :key="i"></i>
+              </div>
             </div>
-          </div>
-          <!-- 标签筛选 -->
-          <div class="filter-group">
-            <div class="filter-label">游戏标签（多选）</div>
-            <div class="filter-options">
-              <span class="filter-option" :class="{ active: !hasCondition('tag') }">全部</span>
-              <span v-for="tag in tagOptions" :key="tag.id" class="filter-option"
-                :class="{ active: isTagSelected(tag) }" @click="handleTagClick(tag)">{{ tag.name }}</span>
+            <div class="tags">
+              <span class="tag" v-for="tag in game.tags" :key="tag.id">{{ tag.name }}</span>
+              <span class="tag">{{ game.minPlayer }}-{{ game.maxPlayer }}人</span>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <div class="game-list waterfall" v-else>
+        <div class="game-item" v-for="game in filteredGames" :key="game.id">
+          <div class="image">
+            <img :src="game.icon" :alt="game.name">
+          </div>
+          <div class="content">
+            <div class="header">
+              <h3 class="title">{{ game.name }}</h3>
+              <div class="rating">
+                <i class="iconfont icon-star-full" v-for="i in scoreToStars(game.star).full" :key="i"></i>
+                <i class="iconfont icon-star-half" v-for="i in scoreToStars(game.star).half" :key="i"></i>
+                <i class="iconfont icon-star-empty" v-for="i in scoreToStars(game.star).empty" :key="i"></i>
+              </div>
+            </div>
+            <div class="tags">
+              <span class="tag" v-for="tag in game.tags" :key="tag.id">{{ tag.name }}</span>
+            </div>
+            <div class="description">
+              <p>{{ game.description }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 选择条件panel -->
+      <div class="condition-panel" v-if="isConditionPanelVisible">
+        <div class="panel-overlay" @click="isConditionPanelVisible = false"></div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">筛选条件</h3>
+            <i class="iconfont icon-close panel-close" @click="isConditionPanelVisible = false"></i>
+          </div>
+          <div class="panel-content">
+            <!-- 玩家人数筛选 -->
+            <div class="filter-group">
+              <div class="filter-label">玩家人数</div>
+              <div class="player-count-input">
+                <input v-model="playerCountValue" type="number" placeholder="输入人数" min="1"
+                  @input="handlePlayerCountInput" />
+                <span class="input-suffix">人</span>
+              </div>
+              <div class="filter-options">
+                <span v-for="option in playerRangeOptions" :key="option.value" class="filter-option"
+                  :class="{ active: hasCondition(ConditionType.PLAYER_RANGE, option.value) || (option.value === 'all' && !hasCondition(ConditionType.PLAYER_COUNT) && !hasCondition(ConditionType.PLAYER_RANGE)) }"
+                  @click="handlePlayerRangeClick(option.value)">{{ option.label }}</span>
+              </div>
+            </div>
+            <!-- 持续时间筛选 -->
+            <div class="filter-group">
+              <div class="filter-label">持续时间</div>
+              <div class="filter-options">
+                <span v-for="option in durationOptions" :key="option.value" class="filter-option"
+                  :class="{ active: hasCondition(ConditionType.DURATION, option.value) || (option.value === 'all' && !hasCondition(ConditionType.DURATION)) }"
+                  @click="handleDurationClick(option.value)">{{ option.label }}</span>
+              </div>
+            </div>
+            <!-- 标签筛选 -->
+            <div class="filter-group">
+              <div class="filter-label">游戏标签（多选）</div>
+              <div class="filter-options">
+                <span class="filter-option" :class="{ active: !hasCondition('tag') }">全部</span>
+                <span v-for="tag in tagOptions" :key="tag.id" class="filter-option"
+                  :class="{ active: isTagSelected(tag) }" @click="handleTagClick(tag)">{{ tag.name }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <style scoped>
 .game-page {
   background: var(--color-bg-page);
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  font-size: 14px;
+  color: var(--color-text-tertiary);
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.error-message {
+  font-size: 14px;
+  color: var(--color-danger);
+  text-align: center;
+}
+
+.retry-btn {
+  padding: 8px 24px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.retry-btn:hover {
+  background: var(--color-primary-hover);
 }
 
 .top-header {
