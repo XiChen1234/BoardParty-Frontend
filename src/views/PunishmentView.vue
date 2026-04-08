@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// 发现页面组件
 </script>
 
 <template>
