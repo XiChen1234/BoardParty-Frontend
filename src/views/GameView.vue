@@ -478,6 +478,7 @@ const scoreToStars = (score: number) => ({
             </div>
             <div class="tags">
               <span class="tag" v-for="tag in game.tags" :key="tag.id">{{ tag.name }}</span>
+              <span class="tag">{{ game.minPlayer }}-{{ game.maxPlayer }}人</span>
             </div>
             <div class="description">
               <p>{{ game.description }}</p>
