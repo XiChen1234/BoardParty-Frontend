@@ -6,7 +6,7 @@ import type { ApiResponse } from '@/types/common-type'
  * @returns 游戏列表数组
  */
 export async function fetchGames(): Promise<Game[]> {
-  const response = await fetch('/games')
+  const response = await fetch('/board-party/api/games')
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }

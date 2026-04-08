@@ -13,8 +13,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/games': {
-        target: 'http://127.0.0.1:8080/board-party/api',
+      '/board-party/api': {
+        target: 'http://127.0.0.1:8080',
         changeOrigin: true,
       },
     },
