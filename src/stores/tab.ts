@@ -8,14 +8,14 @@ const useTabStore = defineStore('tab', {
     // Tab 配置
     tabs: [
       { name: 'list', label: '桌游', icon: 'icon-list' },
-      { name: 'rank', label: '排行', icon: 'icon-rank' },
-      { name: 'punishment', label: '惩罚', icon: 'icon-punishment' },
-      { name: 'profile', label: '我的', icon: 'icon-profile' }
-    ]
+      { name: 'rank', label: '开发中', icon: 'icon-rank' }, // 开发中
+      { name: 'punishment', label: '开发中', icon: 'icon-punishment' }, // 开发中
+      { name: 'profile', label: '开发中', icon: 'icon-profile' }, // 开发中
+    ],
   }),
   getters: {
     // 获取当前选中的 Tab
-    activeTab: (state) => state.tabs[state.activeTabIndex]
+    activeTab: (state) => state.tabs[state.activeTabIndex],
   },
   actions: {
     // 设置选中的 Tab 索引
@@ -26,7 +26,7 @@ const useTabStore = defineStore('tab', {
     },
     // 根据 Tab 名称设置选中状态
     setActiveTabByName(name: string) {
-      const index = this.tabs.findIndex(tab => tab.name === name)
+      const index = this.tabs.findIndex((tab) => tab.name === name)
       if (index !== -1) {
         this.setActiveTabIndex(index)
       }
@@ -37,8 +37,8 @@ const useTabStore = defineStore('tab', {
       if (savedIndex) {
         this.activeTabIndex = parseInt(savedIndex)
       }
-    }
-  }
+    },
+  },
 })
 
 export default useTabStore

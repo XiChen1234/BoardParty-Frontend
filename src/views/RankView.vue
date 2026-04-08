@@ -4,8 +4,8 @@
 
 <template>
   <div class="rank">
-    <h1>排行榜</h1>
-    <p>这里展示桌游排名</p>
+    <h1>开发中</h1>
+    <p>开发中暂未开放功能，请期待！</p>
   </div>
 </template>
 

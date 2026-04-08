@@ -4,8 +4,8 @@
 
 <template>
   <div class="discover">
-    <h1>发现</h1>
-    <p>这里发现新桌游</p>
+    <h1>开发中</h1>
+    <p>开发中暂未开放功能，请期待！</p>
   </div>
 </template>
 

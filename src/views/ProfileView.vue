@@ -3,8 +3,8 @@
 
 <template>
   <div class="profile">
-    <h1>我的</h1>
-    <p>个人中心页面</p>
+    <h1>开发中</h1>
+    <p>开发中暂未开放功能，请期待！</p>
   </div>
 </template>
 
