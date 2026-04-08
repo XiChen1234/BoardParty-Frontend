@@ -14,6 +14,9 @@ export async function fetchGames(): Promise<Game[]> {
   if (result.code !== 'SUCCESS') {
     throw new Error(result.message || '获取游戏列表失败')
   }
+  if (!result.data) {
+    throw new Error('获取游戏列表失败: 数据为空')
+  }
   return result.data
 }
 
@@ -25,6 +28,14 @@ export async function fetchGames(): Promise<Game[]> {
 export function extractTagsFromGames(games: Game[]): Tag[] {
   const tagMap = new Map<number, Tag>()
   games.forEach((game) => {
+    // 过滤空标签
+    if (!game.tags) {
+      return
+    }
+
+    if (!game.tags) {
+      return
+    }
     game.tags.forEach((tag) => {
       if (!tagMap.has(tag.id)) {
         tagMap.set(tag.id, tag)
