@@ -67,6 +67,7 @@ const goBack = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .nav-back .iconfont {

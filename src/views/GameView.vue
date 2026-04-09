@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import type { Game, Tag, Condition } from '@/types/game-type'
 import { fetchGames, extractTagsFromGames } from '@/api/game'
+
+const router = useRouter()
 
 /* ====================================
    常量定义
@@ -404,6 +407,14 @@ const scoreToStars = (score: number) => ({
   half: score % 2,
   empty: 5 - Math.floor(score / 2) - (score % 2)
 })
+
+/**
+ * 跳转到游戏详情页
+ * @param gameId - 游戏ID
+ */
+const navigateToDetail = (gameId: number) => {
+  router.push({ name: 'game-detail', params: { id: gameId } })
+}
 </script>
 
 <template>
@@ -442,7 +453,7 @@ const scoreToStars = (score: number) => ({
       </div>
       <!-- 桌游列表 -->
       <div class="game-list grid" v-if="listMode === 'grid'">
-        <div class="game-item" v-for="game in filteredGames" :key="game.id">
+        <div class="game-item" v-for="game in filteredGames" :key="game.id" @click="navigateToDetail(game.id)">
           <div class="image">
             <img :src="game.icon" :alt="game.name">
           </div>
@@ -463,7 +474,7 @@ const scoreToStars = (score: number) => ({
         </div>
       </div>
       <div class="game-list waterfall" v-else>
-        <div class="game-item" v-for="game in filteredGames" :key="game.id">
+        <div class="game-item" v-for="game in filteredGames" :key="game.id" @click="navigateToDetail(game.id)">
           <div class="image">
             <img :src="game.icon" :alt="game.name">
           </div>
@@ -728,6 +739,17 @@ const scoreToStars = (score: number) => ({
   border-radius: var(--card-radius);
   border: 1px solid var(--card-border);
   overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.game-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.game-item:active {
+  transform: translateY(0);
 }
 
 .grid .game-item {
