@@ -32,3 +32,18 @@ export interface Condition {
   label: string
   value: string | number
 }
+
+/**
+ * 创建桌游请求接口
+ */
+export interface GameCreateRequest {
+  name: string
+  description: string
+  icon: string
+  images: string[]
+  minPlayer: number
+  maxPlayer: number
+  duration: number
+  star: number
+  tagNames: string[]
+}

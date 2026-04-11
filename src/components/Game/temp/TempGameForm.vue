@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
+import { uploadImage, createGame, type ValidationErrors } from '@/api/game'
+import type { GameCreateRequest } from '@/types/game-type'
 
 /**
  * 桌游表单数据类型
@@ -12,15 +14,21 @@ interface GameFormData {
   duration: number | null
   images: PreviewImage[]
   star: number
-  tags: string[]
+  tagNames: string[]
 }
 
 /**
- * 本地预览图片类型
+ * 本地预览图片类型（带上传状态）
  */
 interface PreviewImage {
+  id: string
   url: string
   name: string
+  file: File
+  uploadProgress: number
+  uploadedUrl: string | null
+  uploadError: string | null
+  isUploading: boolean
 }
 
 /**
@@ -34,7 +42,7 @@ interface FormErrors {
   duration?: string
   images?: string
   star?: string
-  tags?: string
+  tagNames?: string
 }
 
 /**
@@ -60,9 +68,15 @@ const modalMessage = ref('')
 const modalType = ref<'success' | 'error'>('success')
 
 /**
- * 表单锁定状态（提交成功后锁定）
+ * 提交状态枚举
  */
-const isLocked = ref(false)
+type SubmitStatus = 'idle' | 'uploading' | 'validating' | 'submitting' | 'success' | 'error'
+
+/**
+ * 提交状态
+ */
+const submitStatus = ref<SubmitStatus>('idle')
+const statusMessage = ref('')
 
 /**
  * 表单数据
@@ -75,7 +89,7 @@ const formData = reactive<GameFormData>({
   duration: null,
   images: [],
   star: 5,
-  tags: []
+  tagNames: []
 })
 
 /**
@@ -89,47 +103,70 @@ const errors = reactive<FormErrors>({})
 const tagInput = ref('')
 
 /**
- * 处理文件选择
+ * 生成唯一ID
+ */
+const generateId = (): string => {
+  return `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+}
+
+/**
+ * 处理文件选择 - 选择后立即上传
  * @param event - 文件选择事件
  */
-const handleFileSelect = (event: Event) => {
+const handleFileSelect = async (event: Event) => {
   const input = event.target as HTMLInputElement
   if (!input.files || input.files.length === 0) {
     return
   }
 
   const files = Array.from(input.files)
+  const currentCount = formData.images.length
 
-  if (formData.images.length + files.length > MAX_IMAGE_COUNT) {
+  if (currentCount + files.length > MAX_IMAGE_COUNT) {
     errors.images = `最多只能上传${MAX_IMAGE_COUNT}张图片`
     input.value = ''
     return
   }
 
+  errors.images = ''
+
   for (const file of files) {
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      errors.images = '仅支持 JPG、PNG、GIF、WebP 格式图片'
+      showErrorModal('仅支持 JPG、PNG、GIF、WebP 格式图片')
       continue
     }
 
     if (file.size > MAX_IMAGE_SIZE) {
-      errors.images = '单张图片大小不能超过 5MB'
+      showErrorModal('单张图片大小不能超过 5MB')
       continue
     }
 
     const previewUrl = URL.createObjectURL(file)
-    formData.images.push({
+    const imageId = generateId()
+
+    const newImage = reactive<PreviewImage>({
+      id: imageId,
       url: previewUrl,
-      name: file.name
+      name: file.name,
+      file: file,
+      uploadProgress: 0,
+      uploadedUrl: null,
+      uploadError: null,
+      isUploading: true
+    })
+
+    formData.images.push(newImage)
+
+    uploadSingleImage(newImage).catch((error) => {
+      console.error(`图片 ${file.name} 上传失败:`, error)
     })
   }
 
-  errors.images = ''
   input.value = ''
 }
 
 /**
- * 移除已上传的图片
+ * 移除图片 - 仅移除本地引用，服务器图片保留
  * @param index - 图片索引
  */
 const removeImage = (index: number) => {
@@ -137,6 +174,29 @@ const removeImage = (index: number) => {
     URL.revokeObjectURL(formData.images[index]!.url)
   }
   formData.images.splice(index, 1)
+  errors.images = ''
+}
+
+/**
+ * 上传单张图片
+ * @param image - 图片对象
+ */
+const uploadSingleImage = async (image: PreviewImage): Promise<void> => {
+  image.isUploading = true
+  image.uploadError = null
+
+  try {
+    const uploadedUrl = await uploadImage(image.file, (percent) => {
+      image.uploadProgress = percent
+    })
+    image.uploadedUrl = uploadedUrl
+    image.uploadProgress = 100
+  } catch (error) {
+    image.uploadError = error instanceof Error ? error.message : '上传失败'
+    throw error
+  } finally {
+    image.isUploading = false
+  }
 }
 
 /**
@@ -199,8 +259,8 @@ const validateForm = (): boolean => {
     isValid = false
   }
 
-  if (formData.tags.length > 10) {
-    errors.tags = '标签数量不能超过10个'
+  if (formData.tagNames.length > 10) {
+    errors.tagNames = '标签数量不能超过10个'
     isValid = false
   }
 
@@ -208,17 +268,119 @@ const validateForm = (): boolean => {
 }
 
 /**
+ * 构建创建桌游请求参数
+ * @param icon - icon图片URL
+ * @param images - 所有图片URL数组
+ * @returns 创建桌游请求对象
+ */
+const buildCreateRequest = (icon: string, images: string[]): GameCreateRequest => {
+  return {
+    name: formData.name.trim(),
+    description: formData.description.trim(),
+    icon: icon,
+    images: images,
+    minPlayer: formData.minPlayer!,
+    maxPlayer: formData.maxPlayer!,
+    duration: formData.duration!,
+    star: formData.star,
+    tagNames: formData.tagNames
+  }
+}
+
+/**
+ * 显示错误弹窗
+ * @param message - 错误消息
+ */
+const showErrorModal = (message: string) => {
+  modalType.value = 'error'
+  modalMessage.value = message
+  showModal.value = true
+}
+
+/**
+ * 显示成功弹窗
+ * @param message - 成功消息
+ */
+const showSuccessModal = (message: string) => {
+  modalType.value = 'success'
+  modalMessage.value = message
+  showModal.value = true
+}
+
+/**
+ * 处理表单提交 - 图片已提前上传
+ */
+const handleSubmit = async () => {
+  if (submitStatus.value !== 'idle') {
+    return
+  }
+
+  if (!validateForm()) {
+    showErrorModal('请检查表单填写')
+    return
+  }
+
+  const failedImages = formData.images.filter(img => img.uploadError !== null)
+  if (failedImages.length > 0) {
+    showErrorModal('存在上传失败的图片，请移除后重试')
+    return
+  }
+
+  const uploadingImages = formData.images.filter(img => img.isUploading)
+  if (uploadingImages.length > 0) {
+    showErrorModal('仍有图片正在上传，请等待上传完成')
+    return
+  }
+
+  const uploadedImages = formData.images.filter(img => img.uploadedUrl !== null)
+  if (uploadedImages.length === 0) {
+    showErrorModal('请至少上传一张图片')
+    return
+  }
+
+  submitStatus.value = 'submitting'
+  statusMessage.value = '正在提交数据...'
+
+  try {
+    const icon = uploadedImages[0]!.uploadedUrl!
+    const images = uploadedImages.map(img => img.uploadedUrl!)
+    const request = buildCreateRequest(icon, images)
+    await createGame(request)
+
+    submitStatus.value = 'success'
+    statusMessage.value = ''
+    showSuccessModal('提交成功！')
+  } catch (error) {
+    submitStatus.value = 'error'
+    statusMessage.value = ''
+
+    if (error instanceof Error) {
+      if ('validationErrors' in error) {
+        const validationErrors = (error as Error & { validationErrors: ValidationErrors }).validationErrors
+        Object.assign(errors, validationErrors)
+        showErrorModal('数据验证失败，请检查表单')
+      } else {
+        showErrorModal(error.message || '提交失败')
+      }
+    } else {
+      showErrorModal('提交失败，请重试')
+    }
+  }
+}
+
+/**
  * 添加标签
  */
 const addTag = () => {
   const tag = tagInput.value.trim()
-  if (tag && !formData.tags.includes(tag)) {
-    if (formData.tags.length >= 10) {
-      errors.tags = '标签数量不能超过10个'
+  if (tag && !formData.tagNames.includes(tag)) {
+    if (formData.tagNames.length >= 10) {
+      errors.tagNames = '标签数量不能超过10个'
       return
     }
-    formData.tags.push(tag)
+    formData.tagNames.push(tag)
     tagInput.value = ''
+    errors.tagNames = ''
   }
 }
 
@@ -227,7 +389,7 @@ const addTag = () => {
  * @param index - 标签索引
  */
 const removeTag = (index: number) => {
-  formData.tags.splice(index, 1)
+  formData.tagNames.splice(index, 1)
 }
 
 /**
@@ -242,30 +404,10 @@ const handleTagKeydown = (event: KeyboardEvent) => {
 }
 
 /**
- * 提交表单
- */
-const handleSubmit = () => {
-  if (validateForm()) {
-    modalType.value = 'success'
-    modalMessage.value = '提交成功，表单已锁定'
-    showModal.value = true
-    isLocked.value = true
-  } else {
-    modalType.value = 'error'
-    const errorMessages = Object.values(errors).filter(Boolean)
-    if (errorMessages.length > 0) {
-      modalMessage.value = errorMessages[0] as string
-    } else {
-      modalMessage.value = '请检查表单填写'
-    }
-    showModal.value = true
-  }
-}
-
-/**
- * 清空表单
+ * 重置表单
  */
 const resetForm = () => {
+  formData.images.forEach(img => URL.revokeObjectURL(img.url))
   Object.assign(formData, {
     name: '',
     description: '',
@@ -274,11 +416,12 @@ const resetForm = () => {
     duration: null,
     images: [],
     star: 5,
-    tags: []
+    tagNames: []
   })
   Object.keys(errors).forEach(key => delete (errors as Record<string, unknown>)[key])
   tagInput.value = ''
-  isLocked.value = false
+  submitStatus.value = 'idle'
+  statusMessage.value = ''
 }
 
 /**
@@ -292,8 +435,57 @@ const closeModal = () => {
  * 返回上一页
  */
 const goBack = () => {
+  if (submitStatus.value !== 'idle' && submitStatus.value !== 'success') {
+    if (!confirm('当前正在提交中，确定要返回吗？')) {
+      return
+    }
+  }
   window.history.back()
 }
+
+/**
+ * 检查是否可以提交
+ */
+const canSubmit = (): boolean => {
+  return submitStatus.value === 'idle' || submitStatus.value === 'error'
+}
+
+/**
+ * 获取提交按钮文本
+ */
+const getSubmitButtonText = (): string => {
+  switch (submitStatus.value) {
+    case 'submitting':
+      return '提交中...'
+    case 'success':
+      return '已提交'
+    case 'error':
+      return '重新提交'
+    default:
+      return '提交'
+  }
+}
+
+/**
+ * 已上传成功的图片数量
+ */
+const uploadedCount = computed(() => {
+  return formData.images.filter(img => img.uploadedUrl !== null && !img.uploadError).length
+})
+
+/**
+ * 上传失败的图片数量
+ */
+const failedCount = computed(() => {
+  return formData.images.filter(img => img.uploadError !== null).length
+})
+
+/**
+ * 正在上传的图片数量
+ */
+const uploadingCount = computed(() => {
+  return formData.images.filter(img => img.isUploading).length
+})
 </script>
 
 <template>
@@ -307,8 +499,14 @@ const goBack = () => {
       <div class="placeholder"></div>
     </div>
 
+    <!-- 状态消息 -->
+    <div v-if="statusMessage" class="status-bar" :class="submitStatus">
+      <div class="status-spinner" v-if="submitStatus === 'uploading' || submitStatus === 'submitting'"></div>
+      <span class="status-text">{{ statusMessage }}</span>
+    </div>
+
     <!-- 表单内容 -->
-    <div class="form-content" :class="{ locked: isLocked }">
+    <div class="form-content" :class="{ locked: submitStatus === 'success' }">
       <!-- 桌游名称 -->
       <div class="form-group">
         <label class="form-label">
@@ -316,7 +514,7 @@ const goBack = () => {
           <span class="required">*</span>
         </label>
         <input v-model="formData.name" type="text" class="form-input" :class="{ 'input-error': errors.name }"
-          placeholder="请输入桌游名称" maxlength="50" :disabled="isLocked" />
+          placeholder="请输入桌游名称" maxlength="50" :disabled="submitStatus === 'success'" />
         <span v-if="errors.name" class="error-text">{{ errors.name }}</span>
         <span class="char-count">{{ formData.name.length }}/50</span>
       </div>
@@ -328,7 +526,7 @@ const goBack = () => {
           <span class="required">*</span>
         </label>
         <textarea v-model="formData.description" class="form-textarea" :class="{ 'input-error': errors.description }"
-          placeholder="请输入详细描述" rows="4" maxlength="500" :disabled="isLocked"></textarea>
+          placeholder="请输入详细描述" rows="4" maxlength="500" :disabled="submitStatus === 'success'"></textarea>
         <span v-if="errors.description" class="error-text">{{ errors.description }}</span>
         <span class="char-count">{{ formData.description.length }}/500</span>
       </div>
@@ -342,13 +540,15 @@ const goBack = () => {
         <div class="player-inputs">
           <div class="player-input-item">
             <input v-model.number="formData.minPlayer" type="number" class="form-input"
-              :class="{ 'input-error': errors.minPlayer }" placeholder="最小" min="1" max="100" :disabled="isLocked" />
+              :class="{ 'input-error': errors.minPlayer }" placeholder="最小" min="1" max="100"
+              :disabled="submitStatus === 'success'" />
             <span class="input-suffix">人</span>
           </div>
           <span class="range-separator">至</span>
           <div class="player-input-item">
             <input v-model.number="formData.maxPlayer" type="number" class="form-input"
-              :class="{ 'input-error': errors.maxPlayer }" placeholder="最大" min="1" max="100" :disabled="isLocked" />
+              :class="{ 'input-error': errors.maxPlayer }" placeholder="最大" min="1" max="100"
+              :disabled="submitStatus === 'success'" />
             <span class="input-suffix">人</span>
           </div>
         </div>
@@ -365,7 +565,8 @@ const goBack = () => {
         </label>
         <div class="duration-input">
           <input v-model.number="formData.duration" type="number" class="form-input"
-            :class="{ 'input-error': errors.duration }" placeholder="请输入时长" min="1" max="600" :disabled="isLocked" />
+            :class="{ 'input-error': errors.duration }" placeholder="请输入时长" min="1" max="600"
+            :disabled="submitStatus === 'success'" />
           <span class="input-suffix">分钟</span>
         </div>
         <span v-if="errors.duration" class="error-text">{{ errors.duration }}</span>
@@ -379,7 +580,7 @@ const goBack = () => {
         </label>
         <div class="rating-input">
           <input v-model.number="formData.star" type="number" class="form-input" :class="{ 'input-error': errors.star }"
-            placeholder="1-10" min="1" max="10" :disabled="isLocked" />
+            placeholder="1-10" min="1" max="10" :disabled="submitStatus === 'success'" />
           <div class="star-display">
             <i v-for="i in 5" :key="i" class="iconfont"
               :class="i <= Math.round(formData.star / 2) ? 'icon-star-full' : 'icon-star-empty'"></i>
@@ -395,16 +596,16 @@ const goBack = () => {
         </label>
         <div class="tag-input-container">
           <input v-model="tagInput" type="text" class="form-input tag-input" placeholder="输入标签后按回车添加" maxlength="20"
-            @keydown="handleTagKeydown" :disabled="isLocked" />
-          <button type="button" class="add-tag-btn" @click="addTag" :disabled="isLocked">添加</button>
+            @keydown="handleTagKeydown" :disabled="submitStatus === 'success'" />
+          <button type="button" class="add-tag-btn" @click="addTag" :disabled="submitStatus === 'success'">添加</button>
         </div>
-        <div class="tag-list" v-if="formData.tags.length > 0">
-          <span v-for="(tag, index) in formData.tags" :key="index" class="tag-item">
+        <div class="tag-list" v-if="formData.tagNames.length > 0">
+          <span v-for="(tag, index) in formData.tagNames" :key="index" class="tag-item">
             {{ tag }}
             <span class="tag-remove" @click="removeTag(index)">×</span>
           </span>
         </div>
-        <span v-if="errors.tags" class="error-text">{{ errors.tags }}</span>
+        <span v-if="errors.tagNames" class="error-text">{{ errors.tagNames }}</span>
       </div>
 
       <!-- 图片列表 -->
@@ -417,10 +618,29 @@ const goBack = () => {
 
         <!-- 已上传图片预览 -->
         <div class="image-grid" v-if="formData.images.length > 0">
-          <div v-for="(image, index) in formData.images" :key="image.url" class="image-item"
+          <div v-for="(image, index) in formData.images" :key="image.id" class="image-item"
             :class="{ 'is-icon': index === 0 }">
             <img :src="image.url" :alt="image.name" />
-            <button class="remove-btn" @click="removeImage(index)">
+            <!-- 上传进度遮罩 -->
+            <div v-if="image.isUploading" class="upload-overlay">
+              <div class="upload-progress-circle">
+                <svg viewBox="0 0 36 36">
+                  <path class="progress-bg"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="progress-fill" :stroke-dasharray="`${image.uploadProgress}, 100`"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <span class="progress-text">{{ image.uploadProgress }}%</span>
+              </div>
+            </div>
+            <!-- 上传失败遮罩 -->
+            <div v-if="image.uploadError" class="error-overlay">
+              <i class="iconfont icon-error"></i>
+              <span>上传失败</span>
+            </div>
+            <!-- 移除按钮 -->
+            <button v-if="!image.isUploading && submitStatus !== 'success'" class="remove-btn"
+              @click="removeImage(index)">
               <i class="iconfont icon-close"></i>
             </button>
             <div v-if="index === 0" class="icon-badge">Icon</div>
@@ -428,10 +648,9 @@ const goBack = () => {
         </div>
 
         <!-- 上传按钮 -->
-        <div class="upload-container" v-if="formData.images.length < MAX_IMAGE_COUNT && !isLocked">
-          <label class="upload-btn" :class="{ disabled: isLocked }">
-            <input type="file" accept="image/jpeg,image/png,image/gif,image/webp" multiple @change="handleFileSelect"
-              :disabled="isLocked" />
+        <div class="upload-container" v-if="formData.images.length < MAX_IMAGE_COUNT && submitStatus !== 'success'">
+          <label class="upload-btn">
+            <input type="file" accept="image/jpeg,image/png,image/gif,image/webp" multiple @change="handleFileSelect" />
             <i class="iconfont icon-upload"></i>
             <span>上传图片</span>
           </label>
@@ -440,16 +659,19 @@ const goBack = () => {
 
         <span v-if="errors.images" class="error-text">{{ errors.images }}</span>
         <div class="selected-info" v-if="formData.images.length > 0">
-          已上传 {{ formData.images.length }}/{{ MAX_IMAGE_COUNT }} 张图片
+          <span>已上传 {{ uploadedCount }}/{{ formData.images.length }} 张</span>
+          <span v-if="failedCount > 0" class="upload-failed-count">，{{ failedCount }}张失败</span>
+          <span v-if="uploadingCount > 0" class="upload-ing-count">，{{ uploadingCount }}张上传中</span>
         </div>
       </div>
 
       <!-- 提交按钮 -->
       <div class="form-actions">
-        <button type="button" class="submit-btn" :disabled="isLocked" @click="handleSubmit">
-          {{ isLocked ? '已提交' : '提交' }}
+        <button type="button" class="submit-btn" :disabled="!canSubmit()" @click="handleSubmit">
+          {{ getSubmitButtonText() }}
         </button>
-        <button type="button" class="reset-btn" v-if="isLocked" @click="resetForm">
+        <button type="button" class="reset-btn" v-if="submitStatus === 'success' || submitStatus === 'error'"
+          @click="resetForm">
           清空
         </button>
       </div>
@@ -517,6 +739,43 @@ const goBack = () => {
 
 .placeholder {
   width: 32px;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.status-bar.uploading,
+.status-bar.submitting {
+  color: var(--color-primary);
+}
+
+.status-bar.success {
+  color: var(--color-success, #52c41a);
+}
+
+.status-bar.error {
+  color: var(--color-danger);
+}
+
+.status-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .form-content {
@@ -767,6 +1026,66 @@ const goBack = () => {
   object-fit: cover;
 }
 
+.upload-overlay,
+.error-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  font-size: 12px;
+}
+
+.upload-progress-circle {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.upload-progress-circle svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.progress-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 3;
+}
+
+.progress-fill {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.error-overlay .iconfont {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.error-overlay span {
+  font-size: 12px;
+}
+
 .remove-btn {
   position: absolute;
   top: 4px;
@@ -857,6 +1176,14 @@ const goBack = () => {
   margin-top: 8px;
   font-size: 12px;
   color: var(--color-text-tertiary);
+}
+
+.upload-failed-count {
+  color: var(--color-danger);
+}
+
+.upload-ing-count {
+  color: var(--color-primary);
 }
 
 .form-actions {
