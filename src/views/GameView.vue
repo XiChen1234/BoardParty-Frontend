@@ -497,6 +497,12 @@ const navigateToDetail = (gameId: number) => {
           </div>
         </div>
       </div>
+      <!-- 空状态 -->
+      <div v-if="filteredGames.length === 0" class="empty">
+        <div class="empty-icon">🎲</div>
+        <div class="empty-text">暂无符合条件的游戏</div>
+        <div class="empty-hint">试试调整筛选条件</div>
+      </div>
       <!-- 选择条件panel -->
       <div class="condition-panel" v-if="isConditionPanelVisible">
         <div class="panel-overlay" @click="isConditionPanelVisible = false"></div>
@@ -881,6 +887,37 @@ const navigateToDetail = (gameId: number) => {
   -webkit-line-clamp: 2;
   line-clamp: 2;
   overflow: hidden;
+}
+
+/* ====================================
+   空状态
+   ==================================== */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 20px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  line-height: 1;
+}
+
+.empty-text {
+  font-size: 16px;
+  color: var(--color-text-tertiary);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: var(--color-text-placeholder);
+  text-align: center;
+  margin-top: 4px;
 }
 
 /* ====================================
