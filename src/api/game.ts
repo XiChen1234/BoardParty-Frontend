@@ -11,7 +11,7 @@ export async function fetchGames(): Promise<Game[]> {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
   const result: ApiResponse<Game[]> = await response.json()
-  if (result.code !== 'SUCCESS') {
+  if (result.code !== 200) {
     throw new Error(result.message || '获取游戏列表失败')
   }
   if (!result.data) {

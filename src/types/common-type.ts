@@ -3,7 +3,7 @@
  * @template T - 响应体数据类型
  */
 export interface ApiResponse<T> {
-  code: string
+  code: number
   message: string | null
   data: T
 }
