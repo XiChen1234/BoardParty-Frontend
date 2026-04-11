@@ -343,7 +343,9 @@ const handleSubmit = async () => {
 
   try {
     const icon = uploadedImages[0]!.uploadedUrl!
-    const images = uploadedImages.map(img => img.uploadedUrl!)
+    const images = uploadedImages.length > 1
+      ? uploadedImages.slice(1).map(img => img.uploadedUrl!)
+      : []
     const request = buildCreateRequest(icon, images)
     await createGame(request)
 

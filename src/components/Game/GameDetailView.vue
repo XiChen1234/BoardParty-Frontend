@@ -19,6 +19,13 @@ const hasMultipleImages = computed(() => {
   return game.value && game.value.images && game.value.images.length > 1
 })
 
+const displayImages = computed(() => {
+  if (game.value && game.value.images && game.value.images.length > 0) {
+    return game.value.images
+  }
+  return game.value ? [game.value.icon] : []
+})
+
 const setActiveImage = (index: number) => {
   activeImageIndex.value = index
 }
@@ -67,12 +74,12 @@ onMounted(() => {
 
     <template v-else-if="game">
       <div class="detail-content">
-        <div class="image-gallery" v-if="game.images && game.images.length > 0">
+        <div class="image-gallery" v-if="displayImages.length > 0">
           <div class="main-image">
-            <img :src="game.images[activeImageIndex]" :alt="game.name" />
+            <img :src="displayImages[activeImageIndex]" :alt="game.name" />
           </div>
           <div class="thumbnail-list" v-if="hasMultipleImages">
-            <div v-for="(img, index) in game.images" :key="index" class="thumbnail"
+            <div v-for="(img, index) in displayImages" :key="index" class="thumbnail"
               :class="{ active: activeImageIndex === index }" @click="setActiveImage(index)">
               <img :src="img" :alt="`${game.name} - 图片 ${index + 1}`" />
             </div>
