@@ -455,7 +455,7 @@ const navigateToDetail = (gameId: number) => {
       <div class="game-list grid" v-if="listMode === 'grid'">
         <div class="game-item" v-for="game in filteredGames" :key="game.id" @click="navigateToDetail(game.id)">
           <div class="image">
-            <img :src="game.icon" :alt="game.name">
+            <img :src="game.icon" :alt="game.name" loading="lazy">
           </div>
           <div class="content">
             <div class="header">
@@ -476,7 +476,7 @@ const navigateToDetail = (gameId: number) => {
       <div class="game-list waterfall" v-else>
         <div class="game-item" v-for="game in filteredGames" :key="game.id" @click="navigateToDetail(game.id)">
           <div class="image">
-            <img :src="game.icon" :alt="game.name">
+            <img :src="game.icon" :alt="game.name" loading="lazy">
           </div>
           <div class="content">
             <div class="header">
