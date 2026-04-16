@@ -1,31 +1,33 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import useTabStore from '../stores/tab'
 
 const route = useRoute()
 const router = useRouter()
-const tabStore = useTabStore()
 
-// 计算当前选中的 Tab
-const currentTab = computed(() => route.name as string)
-
-// 切换 Tab
-const switchTab = (tabName: string) => {
-  router.push({ name: tabName })
-  tabStore.setActiveTabByName(tabName)
+interface TabItem {
+  name: string
+  label: string
+  icon: string
 }
 
-// 初始化 Tab 状态
-onMounted(() => {
-  tabStore.init()
-  tabStore.setActiveTabByName(currentTab.value)
-})
+const tabs: TabItem[] = [
+  { name: 'list', label: '桌游墙', icon: 'icon-list' },
+  { name: 'rank', label: '排行榜', icon: 'icon-rank' },
+  { name: 'punishment', label: '惩罚', icon: 'icon-punishment' },
+  { name: 'profile', label: '我的', icon: 'icon-profile' }
+]
+
+const currentTab = computed(() => route.name as string)
+
+const switchTab = (tabName: string) => {
+  router.push({ name: tabName })
+}
 </script>
 
 <template>
   <div class="tab-bar">
-    <div v-for="tab in tabStore.tabs" :key="tab.name" class="tab-item" :class="{ active: currentTab === tab.name }"
+    <div v-for="tab in tabs" :key="tab.name" class="tab-item" :class="{ active: currentTab === tab.name }"
       @click="switchTab(tab.name)">
       <span class="tab-icon iconfont" :class="tab.icon"></span>
       <span class="tab-label">{{ tab.label }}</span>
