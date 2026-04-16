@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '../layout/LayoutComponents.vue'
-import GameWall from '../views/GameView.vue'
-import Rank from '../views/RankView.vue'
-import Punishment from '../views/PunishmentView.vue'
-import Profile from '../views/ProfileView.vue'
+import GameWall from '../views/tabView/GameView.vue'
+import Rank from '../views/tabView/RankView.vue'
+import Punishment from '../views/tabView/PunishmentView.vue'
+import Profile from '../views/tabView/ProfileView.vue'
+import LoginView from '../views/LoginView.vue'
 
 import TempView from '../views/temp/TempView.vue'
 
@@ -44,6 +45,12 @@ const router = createRouter({
           meta: { title: '我的' },
         },
       ],
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+      meta: { title: '登录' },
     },
     {
       path: '/test',
