@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance } from 'axios'
+import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
 import router from '@/router'
 
 /**
@@ -29,7 +29,7 @@ request.interceptors.request.use((config) => {
  * 解包响应数据，处理错误状态
  */
 request.interceptors.response.use(
-  (response) => response.data,
+  (response: AxiosResponse) => response.data,
   (error) => {
     const status = error.response?.status
     if (status === 401) {
