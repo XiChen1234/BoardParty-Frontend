@@ -5,6 +5,8 @@ import Rank from '../views/RankView.vue'
 import Punishment from '../views/PunishmentView.vue'
 import Profile from '../views/ProfileView.vue'
 
+import TempView from '../views/temp/TempView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -42,6 +44,12 @@ const router = createRouter({
           meta: { title: '我的' },
         },
       ],
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: TempView,
+      meta: { title: '测试' },
     },
   ],
 })
