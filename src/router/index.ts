@@ -5,7 +5,6 @@ import GameDetail from '../components/Game/GameDetailView.vue'
 import Rank from '../views/RankView.vue'
 import Punishment from '../views/PunishmentView.vue'
 import Profile from '../views/ProfileView.vue'
-import TempGameForm from '../components/Game/temp/TempGameForm.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +13,7 @@ const router = createRouter({
       path: '/',
       redirect: '/list',
     },
+    // 以下是tab页面
     {
       path: '/',
       component: Layout,
@@ -50,12 +50,6 @@ const router = createRouter({
           meta: { title: '游戏详情' },
         },
       ],
-    },
-    {
-      path: '/temp/game-form',
-      name: 'temp-game-form',
-      component: TempGameForm,
-      meta: { title: '桌游数据录入', requiresLayout: false },
     },
   ],
 })
