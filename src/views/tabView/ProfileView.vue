@@ -7,6 +7,13 @@ const router = useRouter()
 const userStore = useUserStore()
 const isLogin = computed(() => userStore.token) // 根据token判断是否已经登录
 const userInfo = computed(() => userStore.userInfo) // 获取用户信息
+// 头像文本显示
+const avatarText = computed(() => {
+  if (userInfo.value?.avatarUrl) {
+    return ''
+  }
+  return userInfo.value?.nickname?.charAt(0) || 'U'
+})
 
 function handleLogin() {
   router.push('/login')
@@ -36,7 +43,8 @@ function handleLogout() {
       <div class="profile-header">
         <div class="avatar-wrapper">
           <div class="avatar">
-            <span class="avatar-placeholder">U</span>
+            <img v-if="userInfo?.avatarUrl" :src="userInfo.avatarUrl" alt="avatar" class="avatar-img" />
+            <span v-else class="avatar-placeholder">{{ avatarText }}</span>
           </div>
           <div class="user-info">
             <h2 class="nickname">{{ userInfo?.nickname || '未知用户' }}</h2>
@@ -127,6 +135,12 @@ function handleLogout() {
   font-size: 28px;
   font-weight: 600;
   color: var(--color-text-inverse);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .user-info {

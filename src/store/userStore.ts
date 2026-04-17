@@ -37,6 +37,7 @@ export const useUserStore = defineStore('user', {
       }
 
       await this.fetchUserInfoAction()
+      console.log(this.userInfo)
     },
     /**
      * 退出登录
