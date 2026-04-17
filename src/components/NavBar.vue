@@ -8,7 +8,7 @@ const route = useRoute()
 const defaultTitle = '希晨er的桌游小圈'
 
 const isTabPage = computed(() => {
-  const tabRoutes = ['list', 'rank', 'punishment', 'profile']
+  const tabRoutes = ['list', 'rank', 'group', 'profile']
   return tabRoutes.includes(route.name as string)
 })
 

@@ -4,7 +4,7 @@
 
 <template>
   <div class="container">
-    <h1>随机惩罚</h1>
+    <h1>小圈</h1>
     <p>开发中，敬请期待</p>
   </div>
 </template>

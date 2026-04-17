@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Layout from '../layout/LayoutComponents.vue'
 import GameWall from '../views/tabView/GameView.vue'
 import Rank from '../views/tabView/RankView.vue'
-import Punishment from '../views/tabView/PunishmentView.vue'
+import Group from '../views/tabView/GroupView.vue'
 import Profile from '../views/tabView/ProfileView.vue'
 import LoginView from '../views/LoginView.vue'
 
@@ -24,19 +24,19 @@ const router = createRouter({
           path: 'list',
           name: 'list',
           component: GameWall,
-          meta: { title: '桌游墙' },
+          meta: { title: '桌游' },
         },
         {
           path: 'rank',
           name: 'rank',
           component: Rank,
-          meta: { title: '排行榜' },
+          meta: { title: '排行' },
         },
         {
-          path: 'punishment',
-          name: 'punishment',
-          component: Punishment,
-          meta: { title: '惩罚' },
+          path: 'group',
+          name: 'group',
+          component: Group,
+          meta: { title: '小圈' },
         },
         {
           path: 'profile',

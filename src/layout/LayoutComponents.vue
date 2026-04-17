@@ -8,7 +8,7 @@ const route = useRoute()
 
 // 计算当前是否为 Tab 页面
 const isTabPage = computed(() => {
-  const tabRoutes = ['list', 'rank', 'punishment', 'profile']
+  const tabRoutes = ['list', 'rank', 'group', 'profile']
   return tabRoutes.includes(route.name as string)
 })
 </script>

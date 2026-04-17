@@ -12,10 +12,10 @@ interface TabItem {
 }
 
 const tabs: TabItem[] = [
-  { name: 'list', label: '开发中', icon: 'icon-list' },
-  { name: 'rank', label: '开发中', icon: 'icon-rank' },
-  { name: 'punishment', label: '开发中', icon: 'icon-punishment' },
-  { name: 'profile', label: '个人中心', icon: 'icon-profile' }
+  { name: 'list', label: '桌游', icon: 'icon-list' },
+  { name: 'rank', label: '排行', icon: 'icon-rank' },
+  { name: 'group', label: '小圈', icon: 'icon-group' },
+  { name: 'profile', label: '我的', icon: 'icon-profile' }
 ]
 
 const currentTab = computed(() => route.name as string)
