@@ -15,7 +15,7 @@ const tabs: TabItem[] = [
   { name: 'list', label: '开发中', icon: 'icon-list' },
   { name: 'rank', label: '开发中', icon: 'icon-rank' },
   { name: 'punishment', label: '开发中', icon: 'icon-punishment' },
-  { name: 'profile', label: '开发中', icon: 'icon-profile' }
+  { name: 'profile', label: '个人中心', icon: 'icon-profile' }
 ]
 
 const currentTab = computed(() => route.name as string)
@@ -69,7 +69,7 @@ const switchTab = (tabName: string) => {
 }
 
 .tab-label {
-  font-size: 16px;
+  font-size: 12px;
   color: var(--color-text-tertiary);
 }
 
