@@ -1,75 +1,56 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/store/userStore'
+import { useUserStore } from '@/store/userStore';
+import type { LoginRequest } from '@/types/authType';
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
 
 const router = useRouter()
 const userStore = useUserStore()
-
+// 登录表单数据
 const form = reactive({
   username: '',
   password: '',
-  rememberLogin: userStore.rememberLogin,
+  rememberLogin: false,
 })
-
+const isLoading = ref(false) // 登录中状态
+// 登录错误信息
 const errors = reactive({
   username: '',
   password: '',
 })
 
-const isLoading = ref(false)
+async function handleLogin() {
+  if (!validateForm()) {
+    return
+  }
+  isLoading.value = true
 
-/**
- * 表单验证
- * @returns 是否验证通过
- */
+  try {
+    const request: LoginRequest = {
+      username: form.username.trim(),
+      password: form.password,
+    }
+    await userStore.loginAction(request, form.rememberLogin)
+    router.push('/list')
+  } catch (error) {
+    console.error('登陆失败:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
 function validateForm(): boolean {
-  let isValid = true
-
   errors.username = ''
   errors.password = ''
 
   if (!form.username.trim()) {
     errors.username = '请输入用户名或邮箱'
-    isValid = false
   }
 
   if (!form.password.trim()) {
     errors.password = '请输入密码'
-    isValid = false
   }
-
-  return isValid
-}
-
-/**
- * 处理登录
- */
-async function handleLogin() {
-  if (!validateForm()) {
-    return
-  }
-
-  isLoading.value = true
-
-  try {
-    const result = await userStore.login(form.username, form.password)
-
-    if (result.success) {
-      userStore.setRememberLogin(form.rememberLogin)
-      router.push('/list')
-    } else {
-      if (result.message?.includes('用户') || result.message?.includes('账号')) {
-        errors.username = result.message || '用户名或密码错误'
-      } else if (result.message?.includes('密码')) {
-        errors.password = result.message || '密码错误'
-      } else {
-        errors.password = result.message || '登录失败，请重试'
-      }
-    }
-  } finally {
-    isLoading.value = false
-  }
+  return !errors.username && !errors.password
 }
 </script>
 

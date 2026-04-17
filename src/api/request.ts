@@ -17,7 +17,7 @@ const request: AxiosInstance = axios.create({
  * 添加token到请求头
  */
 request.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`
   }

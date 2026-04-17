@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import { onMounted } from 'vue';
+import { useUserStore } from './store/userStore';
+
+const userStore = useUserStore()
+
+onMounted(() => {
+  if (userStore.token && !userStore.userInfo) {
+    userStore.fetchUserInfoAction()
+  }
+})
 </script>
 
 <template>
