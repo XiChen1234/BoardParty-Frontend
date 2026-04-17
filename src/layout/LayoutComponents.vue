@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import NavBar from '../components/NavBar.vue'
 import TabBar from '../components/TabBar.vue'
+import SideBar from '../components/SideBar.vue'
 
 const route = useRoute()
 
@@ -26,6 +27,9 @@ const isTabPage = computed(() => {
         </transition>
       </router-view>
     </main>
+
+    <!-- 悬浮侧边栏 -->
+    <SideBar />
 
     <!-- 底部 Tab 栏 -->
     <TabBar v-if="isTabPage" />
