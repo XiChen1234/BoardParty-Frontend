@@ -9,4 +9,6 @@ export interface LoginRequest {
 /**
  * 登录响应
  */
-export type LoginResponse = string
+export interface LoginResponse {
+  token: string
+}

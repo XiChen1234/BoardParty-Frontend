@@ -1,4 +1,76 @@
 <script setup lang="ts">
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/userStore'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+const form = reactive({
+  username: '',
+  password: '',
+  rememberLogin: userStore.rememberLogin,
+})
+
+const errors = reactive({
+  username: '',
+  password: '',
+})
+
+const isLoading = ref(false)
+
+/**
+ * 表单验证
+ * @returns 是否验证通过
+ */
+function validateForm(): boolean {
+  let isValid = true
+
+  errors.username = ''
+  errors.password = ''
+
+  if (!form.username.trim()) {
+    errors.username = '请输入用户名或邮箱'
+    isValid = false
+  }
+
+  if (!form.password.trim()) {
+    errors.password = '请输入密码'
+    isValid = false
+  }
+
+  return isValid
+}
+
+/**
+ * 处理登录
+ */
+async function handleLogin() {
+  if (!validateForm()) {
+    return
+  }
+
+  isLoading.value = true
+
+  try {
+    const result = await userStore.login(form.username, form.password)
+
+    if (result.success) {
+      userStore.setRememberLogin(form.rememberLogin)
+      router.push('/list')
+    } else {
+      if (result.message?.includes('用户') || result.message?.includes('账号')) {
+        errors.username = result.message || '用户名或密码错误'
+      } else if (result.message?.includes('密码')) {
+        errors.password = result.message || '密码错误'
+      } else {
+        errors.password = result.message || '登录失败，请重试'
+      }
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -10,26 +82,33 @@
           <p class="login-subtitle">请登录您的账户以继续</p>
         </div>
 
-        <form class="login-form">
+        <form class="login-form" @submit.prevent="handleLogin">
           <div class="form-group">
             <label for="username" class="form-label">用户名 / 邮箱</label>
-            <input type="text" id="username" class="form-input" placeholder="请输入用户名或邮箱" />
+            <input id="username" v-model="form.username" type="text" class="form-input"
+              :class="{ 'form-input--error': errors.username }" placeholder="请输入用户名或邮箱" :disabled="isLoading" />
+            <span v-if="errors.username" class="form-error">{{ errors.username }}</span>
           </div>
 
           <div class="form-group">
             <label for="password" class="form-label">密码</label>
-            <input type="password" id="password" class="form-input" placeholder="请输入密码" />
+            <input id="password" v-model="form.password" type="password" class="form-input"
+              :class="{ 'form-input--error': errors.password }" placeholder="请输入密码" :disabled="isLoading" />
+            <span v-if="errors.password" class="form-error">{{ errors.password }}</span>
           </div>
 
           <div class="form-options">
             <label class="checkbox-wrapper">
-              <input type="checkbox" class="checkbox-input" />
+              <input v-model="form.rememberLogin" type="checkbox" class="checkbox-input" :disabled="isLoading" />
               <span class="checkbox-label">记住登录状态</span>
             </label>
             <a href="#" class="link-forgot">忘记密码？</a>
           </div>
 
-          <button type="submit" class="btn-login">登 录</button>
+          <button type="submit" class="btn-login" :disabled="isLoading">
+            <span v-if="isLoading" class="btn-login__loading">登 录 中...</span>
+            <span v-else>登 录</span>
+          </button>
         </form>
 
         <div class="login-footer">
@@ -123,6 +202,25 @@
   box-shadow: 0 0 0 3px rgba(58, 95, 122, 0.15);
 }
 
+.form-input--error {
+  border-color: var(--color-danger);
+}
+
+.form-input--error:focus {
+  box-shadow: 0 0 0 3px rgba(199, 80, 71, 0.15);
+}
+
+.form-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-error {
+  font-size: 12px;
+  color: var(--color-danger);
+  margin-top: 4px;
+}
+
 .form-options {
   display: flex;
   align-items: center;
@@ -180,6 +278,18 @@
 
 .btn-login:active {
   transform: scale(0.98);
+}
+
+.btn-login:disabled {
+  background: var(--button-primary-hover);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-login__loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .login-footer {

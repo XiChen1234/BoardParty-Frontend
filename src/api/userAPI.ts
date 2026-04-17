@@ -7,5 +7,5 @@ import type { UserInfo } from '@/types/userType'
  * @returns 用户信息
  */
 export function getUserInfo(): Promise<CommonResponse<UserInfo>> {
-  return request.get('/user/info')
+  return request.get('/user/me')
 }
