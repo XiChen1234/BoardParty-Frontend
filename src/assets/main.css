@@ -3,6 +3,12 @@
 #app {
   font-weight: normal;
   background-color: var(--color-bg);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media (hover: hover) {

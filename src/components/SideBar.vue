@@ -36,7 +36,6 @@ const handleClick = () => {
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(58, 95, 122, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  -webkit-tap-highlight-color: transparent;
 }
 
 .toggle-btn:active {

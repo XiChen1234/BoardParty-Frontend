@@ -29,7 +29,7 @@ const isTabPage = computed(() => {
     </main>
 
     <!-- 悬浮侧边栏 -->
-    <SideBar />
+    <SideBar v-if="isTabPage" />
 
     <!-- 底部 Tab 栏 -->
     <TabBar v-if="isTabPage" />
