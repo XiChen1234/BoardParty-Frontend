@@ -3,17 +3,17 @@ import { ref, computed, onUnmounted } from 'vue'
 
 interface Punishment {
   id: number
-  emoji: string
+  icon: string
   name: string
-  description: string
+  content: string
 }
 
 const punishmentLibrary: Punishment[] = [
-  { id: 1, emoji: '🍺', name: '干杯一杯', description: '举起你的酒杯，为这场失败干一杯！' },
-  { id: 2, emoji: '🎤', name: '学动物叫', description: '模仿三种不同动物的叫声，每种叫三声' },
-  { id: 3, emoji: '💃', name: '才艺表演', description: '即兴表演一段舞蹈或歌曲' },
-  { id: 4, emoji: '😣', name: '表情包模仿', description: '模仿一个经典表情包的表情' },
-  { id: 5, emoji: '📢', name: '大声朗读', description: '用最大声朗读这句话："我输了！"' },
+  { id: 1, icon: '🍺', name: '干杯一杯', content: '举起你的酒杯，为这场失败干一杯！' },
+  { id: 2, icon: '🎤', name: '学动物叫', content: '模仿三种不同动物的叫声，每种叫三声' },
+  { id: 3, icon: '💃', name: '才艺表演', content: '即兴表演一段舞蹈或歌曲' },
+  { id: 4, icon: '😣', name: '表情包模仿', content: '模仿一个经典表情包的表情' },
+  { id: 5, icon: '📢', name: '大声朗读', content: '用最大声朗读这句话："我输了！"' },
 ]
 
 const cardState = ref<'idle' | 'spinning' | 'stopped'>('idle')
@@ -90,9 +90,9 @@ onUnmounted(() => {
               <span class="mystery-text">？？？？</span>
             </div>
             <div v-else-if="(cardState === 'spinning' && isRevealed) || cardState === 'stopped'" class="front-result">
-              <span class="result-emoji">{{ selectedPunishment?.emoji }}</span>
+              <span class="result-icon">{{ selectedPunishment?.icon }}</span>
               <h2 class="result-name">{{ selectedPunishment?.name }}</h2>
-              <p class="result-desc">{{ selectedPunishment?.description }}</p>
+              <p class="result-desc">{{ selectedPunishment?.content }}</p>
             </div>
           </div>
         </div>
@@ -204,7 +204,7 @@ onUnmounted(() => {
   width: 100%;
 }
 
-.result-emoji {
+.result-icon {
   font-size: 80px;
   display: block;
   margin-bottom: 16px;
