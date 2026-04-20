@@ -1,39 +1,39 @@
 :root {
-
   /* ====================================
      一、颜色资源（Palette）
      仅用于定义颜色，不建议直接在业务代码中使用
   ==================================== */
 
   /* 主品牌蓝色系 */
-  --blue-900: #28455A;
-  --blue-700: #3A5F7A;
-  --blue-500: #5F7F99;
-  --blue-400: #8BA6B8;
-  --blue-300: #A6C1D4;
-  --blue-200: #C4D9E8;
-  --blue-100: #DCE6EE;
-  --blue-50: #F0F4F7;
+  --blue-1000: #1f2937;
+  --blue-900: #28455a;
+  --blue-700: #3a5f7a;
+  --blue-500: #5f7f99;
+  --blue-400: #8ba6b8;
+  --blue-300: #a6c1d4;
+  --blue-200: #c4d9e8;
+  --blue-100: #dce6ee;
+  --blue-50: #f0f4f7;
 
   /* 点缀颜色 */
-  --orange-500: #D98859;
-  --green-500: #6A9983;
+  --orange-500: #d98859;
+  --green-500: #6a9983;
 
   /* 灰度体系（界面基础色） */
-  --gray-950: #0F172A;
-  --gray-900: #1E293B;
+  --gray-950: #0f172a;
+  --gray-900: #1e293b;
   --gray-700: #475569;
-  --gray-500: #64748B;
-  --gray-400: #94A3B8;
-  --gray-300: #CBD5E1;
-  --gray-200: #E2E8F0;
-  --gray-100: #F1F5F9;
-  --gray-50: #F8F9FA;
+  --gray-500: #64748b;
+  --gray-400: #94a3b8;
+  --gray-300: #cbd5e1;
+  --gray-200: #e2e8f0;
+  --gray-100: #f1f5f9;
+  --gray-50: #f8f9fa;
   --gray-0: #ffffff;
 
   /* 状态颜色 */
-  --red-500: #C75047;
-  --red-100: #FBEAE9;
+  --red-500: #c75047;
+  --red-100: #fbeae9;
 
   /* ====================================
      二、语义变量（Semantic）
@@ -90,6 +90,7 @@
   --button-primary-bg: var(--color-primary);
   --button-primary-hover: var(--color-primary-hover);
   --button-primary-text: var(--color-text-inverse);
+  --button-primary-bg-disabled: var(--gray-500);
 
   /* 输入框组件 */
   --input-bg: var(--gray-0);
