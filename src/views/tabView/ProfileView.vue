@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { useUserStore } from '@/store/userStore';
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
 const userStore = useUserStore()
 const isLogin = computed(() => userStore.token) // 根据token判断是否已经登录
 const userInfo = computed(() => userStore.userInfo) // 获取用户信息
+const avatarLoadFailed = ref(false) // 头像加载失败状态
 // 头像文本显示
 const avatarText = computed(() => {
-  if (userInfo.value?.avatarUrl) {
+  if (userInfo.value?.avatarUrl && !avatarLoadFailed.value) {
     return ''
   }
   return userInfo.value?.nickname?.charAt(0) || 'U'
@@ -20,6 +21,9 @@ function handleLogin() {
 }
 function handleLogout() {
   userStore.logoutAction()
+}
+function handleAvatarError() {
+  avatarLoadFailed.value = true
 }
 </script>
 
@@ -43,7 +47,8 @@ function handleLogout() {
       <div class="profile-header">
         <div class="avatar-wrapper">
           <div class="avatar">
-            <img v-if="userInfo?.avatarUrl" :src="userInfo.avatarUrl" alt="avatar" class="avatar-img" />
+            <img v-if="userInfo?.avatarUrl && !avatarLoadFailed" :src="userInfo.avatarUrl" alt="avatar"
+              class="avatar-img" @error="handleAvatarError" />
             <span v-else class="avatar-placeholder">{{ avatarText }}</span>
           </div>
           <div class="user-info">
