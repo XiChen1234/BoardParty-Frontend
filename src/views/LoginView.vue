@@ -3,17 +3,16 @@ import { useUserStore } from '@/store/userStore';
 import type { LoginRequest } from '@/types/authType';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
+import PageLoading from '@/components/PageLoading.vue';
 
 const router = useRouter()
 const userStore = useUserStore()
-// 登录表单数据
 const form = reactive({
   username: '',
   password: '',
   rememberLogin: false,
 })
-const isLoading = ref(false) // 登录中状态
-// 登录错误信息
+const isLoading = ref(false)
 const errors = reactive({
   username: '',
   password: '',
@@ -87,8 +86,7 @@ function validateForm(): boolean {
           </div>
 
           <button type="submit" class="btn-login" :disabled="isLoading">
-            <span v-if="isLoading" class="btn-login__loading">登 录 中...</span>
-            <span v-else>登 录</span>
+            登 录
           </button>
         </form>
 
@@ -99,6 +97,7 @@ function validateForm(): boolean {
       </div>
     </div>
   </div>
+  <PageLoading :show="isLoading" text="登录中..." />
 </template>
 
 <style scoped>
@@ -265,12 +264,6 @@ function validateForm(): boolean {
   background: var(--button-primary-hover);
   cursor: not-allowed;
   transform: none;
-}
-
-.btn-login__loading {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .login-footer {

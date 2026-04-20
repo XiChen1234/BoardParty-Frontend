@@ -9,7 +9,6 @@ export const useUserStore = defineStore('user', {
   state: () => ({
     token: localStorage.getItem('token') || sessionStorage.getItem('token') || '',
     userInfo: null as UserInfo | null,
-    isLoading: false,
   }),
   actions: {
     /**
