@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, type AxiosResponse } from 'axios'
+import axios, { type AxiosInstance } from 'axios'
 import router from '@/router'
 import { toast } from '@/utils/toast'
 
@@ -30,44 +30,30 @@ request.interceptors.request.use((config) => {
  * 解包响应数据，处理错误状态
  */
 request.interceptors.response.use(
-  (response: AxiosResponse) => {
-    const res = response.data
-    // 业务成功
-    if (res.code === 0) {
-      return res.data
-    }
-
-    // 业务失败
-    toast.error(res.message || '操作失败')
-    return Promise.reject(res)
+  (response) => {
+    return response.data // CommonResponse
   },
   (error) => {
     const status = error.response?.status
+
     switch (status) {
       case 401:
-        toast.warn('登录已过期，请重新登录')
-
-        localStorage.removeItem('token')
-        sessionStorage.removeItem('token')
-
+        toast.warn('登录已过期')
         router.push('/login')
         break
-
       case 403:
-        toast.error('没有权限访问')
+        toast.error('没有权限')
         break
-
       case 404:
-        toast.error('请求资源不存在')
+        toast.error('资源不存在')
         break
-
       case 500:
         toast.error('服务器错误')
         break
-
       default:
-        toast.error(error.response?.data?.message || '请求失败')
+        toast.error('网络错误')
     }
+
     return Promise.reject(error)
   },
 )

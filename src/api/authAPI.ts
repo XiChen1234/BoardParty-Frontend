@@ -1,5 +1,5 @@
-import request from './request'
 import type { CommonResponse } from '@/types/apiType'
+import request from './request'
 import type { LoginRequest, LoginResponse } from '@/types/authType'
 
 /**
