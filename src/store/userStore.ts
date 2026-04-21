@@ -50,14 +50,12 @@ export const useUserStore = defineStore('user', {
       sessionStorage.removeItem('token')
     },
     async fetchUserInfoAction() {
-      try {
-        const res: CommonResponse<UserInfo> = await getUserInfo()
-        if (res.code !== 0 || !res.data) {
-          throw new Error(res.msg || '获取用户信息失败')
-        }
-        this.userInfo = res.data
-      } finally {
+      const res: CommonResponse<UserInfo> = await getUserInfo()
+      if (res.code !== 0 || !res.data) {
+        this.userInfo = null
+        throw new Error(res.msg || '获取用户信息失败')
       }
+      this.userInfo = res.data
     },
   },
 })

@@ -2,6 +2,7 @@
 import { ref, onUnmounted } from 'vue'
 import type { Punishment } from '@/types/punishmentType'
 import { getPublicPunishment } from '@/api/punishmentAPI'
+import { toast } from '@/utils/toast'
 
 type State = 'idle' | 'spinning' | 'stopped'
 const state = ref<State>('idle')
@@ -38,6 +39,7 @@ async function draw() {
     punishment.value = result.data ?? DEFAULT_PUNISHMENT
   } catch (error) {
     console.error('抽取公共惩罚失败:', error)
+    toast.error('抽取失败，将使用默认惩罚')
     if (Date.now() - startTime < MIN_SPIN_TIME) {
       await spinTimer
     }
