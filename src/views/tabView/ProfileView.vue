@@ -30,7 +30,7 @@ function handleAvatarError() {
 // loading相关
 const loading = ref(false)
 onMounted(async () => {
-  if (!isLogin.value || userInfo.value) {
+  if (!isLogin.value || userInfo.value?.id) {
     return
   }
 
