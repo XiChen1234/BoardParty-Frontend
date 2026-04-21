@@ -3,7 +3,7 @@ import { useUserStore } from '@/store/userStore';
 import type { LoginRequest } from '@/types/authType';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import PageLoading from '@/components/PageLoading.vue';
+import PageLoading from '@/components/loading/PageLoading.vue';
 
 const router = useRouter()
 const userStore = useUserStore()
