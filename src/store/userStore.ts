@@ -20,8 +20,6 @@ export const useUserStore = defineStore('user', {
     async loginAction(request: LoginRequest, rememberLogin: boolean) {
       const res: CommonResponse<LoginResponse> = await login(request)
       if (res.code !== 0 || !res.data) {
-        console.log(res)
-
         throw new Error(res.msg || '登录失败')
       }
       const token = res.data.token
