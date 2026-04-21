@@ -4,7 +4,6 @@ import type { CommonResponse } from '@/types/apiType'
 import type { LoginRequest, LoginResponse } from '@/types/authType'
 import type { UserInfo } from '@/types/userType'
 import { defineStore } from 'pinia'
-import { useLoadingStore } from './loadingStore'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -51,8 +50,6 @@ export const useUserStore = defineStore('user', {
       sessionStorage.removeItem('token')
     },
     async fetchUserInfoAction() {
-      const loadingStore = useLoadingStore()
-      loadingStore.show()
       try {
         const res: CommonResponse<UserInfo> = await getUserInfo()
         if (res.code !== 0 || !res.data) {
@@ -60,7 +57,6 @@ export const useUserStore = defineStore('user', {
         }
         this.userInfo = res.data
       } finally {
-        loadingStore.hide()
       }
     },
   },

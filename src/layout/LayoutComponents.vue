@@ -4,11 +4,8 @@ import { useRoute } from 'vue-router'
 import NavBar from '../components/layout/NavBar.vue'
 import TabBar from '../components/layout/TabBar.vue'
 import SideBar from '../components/layout/SideBar.vue'
-import ContentLoading from '../components/loading/ContentLoading.vue'
-import { useLoadingStore } from '../store/loadingStore'
 
 const route = useRoute()
-const loadingStore = useLoadingStore()
 
 // 计算当前是否为 Tab 页面
 const isTabPage = computed(() => {
@@ -24,7 +21,6 @@ const isTabPage = computed(() => {
 
     <!-- 主内容区 -->
     <main class="content">
-      <ContentLoading :show="loadingStore.isLoading" />
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" />

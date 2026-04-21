@@ -1,19 +1,8 @@
 <script setup lang="ts">
-import { watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { useLoadingStore } from '../../store/loadingStore'
-
 defineProps<{
   show: boolean
   text?: string
 }>()
-
-const route = useRoute()
-const loadingStore = useLoadingStore()
-
-watch(() => route.path, () => {
-  loadingStore.hide()
-})
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import ContentLoading from '@/components/loading/ContentLoading.vue';
 import { useUserStore } from '@/store/userStore';
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
@@ -25,10 +26,26 @@ function handleLogout() {
 function handleAvatarError() {
   avatarLoadFailed.value = true
 }
+
+// loading相关
+const loading = ref(false)
+onMounted(async () => {
+  if (!isLogin.value || userInfo.value) {
+    return
+  }
+
+  loading.value = true
+  try {
+    await userStore.fetchUserInfoAction()
+  } finally {
+    loading.value = false
+  }
+})
 </script>
 
 <template>
   <div class="profile-page">
+    <ContentLoading :show="loading"></ContentLoading>
     <div v-if="!isLogin">
       <div class="profile-header">
         <div class="avatar-wrapper">
