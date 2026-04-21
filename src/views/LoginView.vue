@@ -4,6 +4,7 @@ import type { LoginRequest } from '@/types/authType';
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import PageLoading from '@/components/loading/PageLoading.vue';
+import { toast } from '@/utils/toast';
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -31,8 +32,10 @@ async function handleLogin() {
     }
     await userStore.loginAction(request, form.rememberLogin)
     router.push('/list')
+    toast.success('欢迎您，' + userStore.userInfo?.username)
   } catch (error) {
     console.error('登陆失败:', error)
+    toast.error('登录失败，请检查用户名和密码')
   } finally {
     isLoading.value = false
   }

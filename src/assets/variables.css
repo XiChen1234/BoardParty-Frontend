@@ -35,6 +35,12 @@
   --red-500: #c75047;
   --red-100: #fbeae9;
 
+  /* 醒目颜色 */
+  --success: #52c41a;
+  --info: #1890ff;
+  --warn: #faad14;
+  --error: #ff4d4f;
+
   /* ====================================
      二、语义变量（Semantic）
      页面开发时主要使用这一层变量
@@ -100,4 +106,10 @@
   /* 标签组件 */
   --tag-bg: var(--color-bg-soft);
   --tag-text: var(--color-text-secondary);
+
+  /* Toast 组件 */
+  --toast-success: var(--success);
+  --toast-info: var(--info);
+  --toast-warn: var(--warn);
+  --toast-error: var(--error);
 }
