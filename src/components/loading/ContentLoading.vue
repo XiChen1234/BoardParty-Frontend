@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useLoadingStore } from '../store/loadingStore'
+import { useLoadingStore } from '../../store/loadingStore'
 
 defineProps<{
   show: boolean

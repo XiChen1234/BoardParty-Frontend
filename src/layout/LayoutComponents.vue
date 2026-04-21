@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import NavBar from '../components/NavBar.vue'
-import TabBar from '../components/TabBar.vue'
-import SideBar from '../components/SideBar.vue'
-import ContentLoading from '../components/ContentLoading.vue'
+import NavBar from '../components/layout/NavBar.vue'
+import TabBar from '../components/layout/TabBar.vue'
+import SideBar from '../components/layout/SideBar.vue'
+import ContentLoading from '../components/loading/ContentLoading.vue'
 import { useLoadingStore } from '../store/loadingStore'
 
 const route = useRoute()
