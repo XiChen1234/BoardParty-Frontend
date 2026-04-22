@@ -4,10 +4,11 @@ import type { CommonResponse } from '@/types/apiType'
 import type { LoginRequest, LoginResponse } from '@/types/authType'
 import type { UserInfo } from '@/types/userType'
 import { defineStore } from 'pinia'
+import { getToken, setToken, removeToken } from '@/utils/storage'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    token: localStorage.getItem('token') || sessionStorage.getItem('token') || '',
+    token: getToken(),
     userInfo: null as UserInfo | null,
   }),
   actions: {
@@ -24,16 +25,7 @@ export const useUserStore = defineStore('user', {
       }
       const token = res.data.token
       this.token = token
-
-      // 清除旧的token，避免重复登录
-      localStorage.removeItem('token')
-      sessionStorage.removeItem('token')
-
-      if (rememberLogin) {
-        localStorage.setItem('token', token)
-      } else {
-        sessionStorage.setItem('token', token)
-      }
+      setToken(token, rememberLogin)
 
       await this.fetchUserInfoAction()
     },
@@ -45,8 +37,7 @@ export const useUserStore = defineStore('user', {
     logoutAction() {
       this.token = ''
       this.userInfo = null
-      localStorage.removeItem('token')
-      sessionStorage.removeItem('token')
+      removeToken()
     },
     async fetchUserInfoAction() {
       const res: CommonResponse<UserInfo> = await getUserInfo()

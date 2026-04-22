@@ -1,6 +1,7 @@
 import axios, { type AxiosInstance } from 'axios'
 import router from '@/router'
 import { toast } from '@/utils/toast'
+import { getToken } from '@/utils/storage'
 
 /**
  * 请求实例
@@ -18,7 +19,7 @@ const request: AxiosInstance = axios.create({
  * 添加token到请求头
  */
 request.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+  const token = getToken()
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`
   }

@@ -160,25 +160,46 @@ const groupId = computed(() => Number(route.params.id))
 
 ---
 
-### 8. **token 读取逻辑重复** ❌ 待优化
+### 8. **token 读取逻辑重复** ✅ 已完成
 
-**文件**：[request.ts#L21](file:///c:/Document/Project/BoardParty-Frontend/src/api/request.ts#L21)
+**文件**：[request.ts#L21](file:///c:/Document/Project/BoardProject/BoardParty-Frontend/src/api/request.ts#L21)
 
-```typescript
-const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-```
+**问题**: token 存储逻辑分散在 `request.ts` 和 `userStore.ts` 两处，容易不一致。
 
-**文件2**：[userStore.ts#L10](file:///c:/Document/Project/BoardParty-Frontend/src/store/userStore.ts#L10)
+**优化**: 创建统一的 [storage.ts](file:///c:/Document/Project/BoardParty-Frontend/src/utils/storage.ts) 工具文件：
 
 ```typescript
-token: localStorage.getItem('token') || sessionStorage.getItem('token') || '',
+export function getToken(): string {
+  return localStorage.getItem('token') || sessionStorage.getItem('token') || ''
+}
+
+export function setToken(token: string, remember: boolean): void {
+  localStorage.removeItem('token')
+  sessionStorage.removeItem('token')
+  if (remember) {
+    localStorage.setItem('token', token)
+  } else {
+    sessionStorage.setItem('token', token)
+  }
+}
+
+export function removeToken(): void {
+  localStorage.removeItem('token')
+  sessionStorage.removeItem('token')
+}
 ```
 
-**问题**: token 存储逻辑分散在两处，容易不一致。
+**修改点**:
+- 新增 `src/utils/storage.ts` 统一管理 token
+- `request.ts` 导入 `getToken()` 替代直接读取 localStorage/sessionStorage
+- `userStore.ts` 导入 `getToken()`, `setToken()`, `removeToken()` 替代分散的存储逻辑
 
-**建议**: 将 token 读取逻辑统一到 `storage.ts` 工具文件中。
+**优化效果**:
+- ✅ 消除重复代码，DRY原则
+- ✅ 统一 token 管理逻辑，便于维护
+- ✅ 集中化存储操作，未来可扩展（如加密存储）
 
-**状态**: ❌ 待优化
+**状态**: ✅ 已完成
 
 ---
 
@@ -239,8 +260,8 @@ line-clamp: 3;
 | P1 | 重复的 API 响应类型 | 低 | ✅ 已完成 |
 | P2 | console.log 残留 | 低 | ✅ 已完成 |
 | P2 | 硬编码数字无注释 | 低 | ✅ 已完成 |
-| P2 | 路由参数重复解析 | 低 | ❌ 待优化 |
-| P3 | token 读取重复 | 低 | ❌ 待优化 |
+| P2 | 路由参数重复解析 | 低 | ✅ 已完成 |
+| P3 | token 读取重复 | 低 | ✅ 已完成 |
 | P3 | 未实现功能 | 低 | ❌ 待优化 |
 | P3 | 硬编码注册链接 | 低 | ❌ 待优化 |
 
@@ -252,10 +273,10 @@ line-clamp: 3;
 |------|------|--------|--------|
 | 严重问题 (P0) | 3 | 2 | 1 |
 | 中等问题 (P1-P2) | 5 | 3 | 2 |
-| 轻微问题 (P3) | 3 | 0 | 3 |
-| **总计** | **11** | **5** | **6** |
+| 轻微问题 (P3) | 3 | 1 | 2 |
+| **总计** | **11** | **7** | **4** |
 
-**完成率**: 55% (6/11)
+**完成率**: 64% (7/11)
 
 ---
 
@@ -278,3 +299,12 @@ line-clamp: 3;
 
 ### 5. 硬编码数字无注释 - ✅ 已完成
 - `MIN_SPIN_TIME = 3000` 已添加注释说明
+
+### 6. 路由参数重复解析 - ✅ 已完成
+- 使用 `computed(() => Number(route.params.id))` 统一解析 groupId
+- 消除 goToList、goToRank、onMounted 中的重复解析
+
+### 7. token 读取逻辑重复 - ✅ 已完成
+- 创建统一的 `storage.ts` 工具文件
+- 提供 `getToken()`, `setToken()`, `removeToken()` 三个函数
+- `request.ts` 和 `userStore.ts` 均使用统一函数管理 token
