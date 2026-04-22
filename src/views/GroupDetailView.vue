@@ -31,6 +31,8 @@ const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 
+const groupId = computed(() => Number(route.params.id))
+
 const groupDetail = ref<GroupDetail | null>(null)
 const loading = ref(false)
 const descExpanded = ref(false)
@@ -60,22 +62,19 @@ function toggleDesc() {
 }
 
 function goToList() {
-  const id = Number(route.params.id)
-  router.push(`/list?groupId=${id}`)
+  router.push(`/list?groupId=${groupId.value}`)
 }
 
 function goToRank() {
-  const id = Number(route.params.id)
-  router.push(`/rank?groupId=${id}`)
+  router.push(`/rank?groupId=${groupId.value}`)
 }
 
 onMounted(async () => {
-  const id = Number(route.params.id)
-  if (!id) return
+  if (!groupId.value) return
 
   loading.value = true
   try {
-    const res = await getGroupDetail(id)
+    const res = await getGroupDetail(groupId.value)
     if (res.code === 0 && res.data) {
       groupDetail.value = res.data
     }
