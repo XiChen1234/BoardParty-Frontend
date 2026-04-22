@@ -4,7 +4,7 @@ import GameWall from '../views/tabView/GameView.vue'
 import Rank from '../views/tabView/RankView.vue'
 import Group from '../views/tabView/GroupView.vue'
 import Profile from '../views/tabView/ProfileView.vue'
-import GroupDetailView from '../views/GroupDetailView.vue'
+import GroupDetailView from '../views/group/GroupDetailView.vue'
 import PunishmentView from '../views/PunishmentView.vue'
 import LoginView from '../views/LoginView.vue'
 
