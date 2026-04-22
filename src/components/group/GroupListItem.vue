@@ -39,7 +39,7 @@ function getRoleText(role: UserRole): string {
         <span class="item-desc" v-if="item.description">{{ item.description }}</span>
         <span class="member-count">
           <i class="iconfont icon-user"></i>
-          {{ item.memberCount }}
+          {{ item.memberCount }}人
         </span>
       </div>
     </div>
@@ -118,7 +118,7 @@ function getRoleText(role: UserRole): string {
   font-size: 13px;
   color: var(--color-text-secondary);
   flex-shrink: 0;
-  width: 60px;
+  width: 50px;
   display: flex;
   align-items: center;
   justify-content: space-between;

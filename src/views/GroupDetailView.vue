@@ -18,6 +18,27 @@ const descOverflow = ref(false)
 
 const currentUserId = computed(() => userStore.userInfo?.id)
 
+const sortedMemberList = computed(() => {
+  if (!groupDetail.value?.memberList) return []
+
+  const members = [...groupDetail.value.memberList]
+  const currentUser = members.find(m => m.id === currentUserId.value)
+  const otherMembers = members.filter(m => m.id !== currentUserId.value)
+
+  const sortedOthers = otherMembers.sort((a, b) => a.role - b.role)
+
+  if (currentUser) {
+    const insertIndex = sortedOthers.findIndex(m => m.role !== currentUser.role)
+    if (insertIndex === -1) {
+      sortedOthers.push(currentUser)
+    } else {
+      sortedOthers.splice(insertIndex, 0, currentUser)
+    }
+  }
+
+  return sortedOthers
+})
+
 function getRoleText(role: number): string {
   switch (role) {
     case 0:
@@ -130,7 +151,7 @@ onMounted(async () => {
         </div>
 
         <div class="member-list">
-          <div v-for="member in groupDetail.memberList" :key="member.id" class="member-item">
+          <div v-for="member in sortedMemberList" :key="member.id" class="member-item">
             <div class="member-avatar">
               <img v-if="member.avatarUrl" :src="member.avatarUrl" :alt="member.nickname" />
               <span v-else class="avatar-placeholder">{{ member.nickname.charAt(0) }}</span>
