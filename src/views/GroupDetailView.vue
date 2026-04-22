@@ -3,8 +3,29 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getGroupDetail } from '@/api/groupAPI'
 import { useUserStore } from '@/store/userStore'
+import { UserRole } from '@/types/groupType'
 import type { GroupDetail, GroupMember } from '@/types/groupType'
 import ContentLoading from '@/components/loading/ContentLoading.vue'
+
+const RoleTextMap: Record<UserRole, string> = {
+  [UserRole.CREATOR]: '创建者',
+  [UserRole.ADMIN]: '管理员',
+  [UserRole.MEMBER]: '成员',
+}
+
+const RoleStyleMap: Record<UserRole, { background: string; color: string }> = {
+  [UserRole.CREATOR]: { background: 'var(--color-accent)', color: 'var(--color-text-inverse)' },
+  [UserRole.ADMIN]: { background: 'var(--color-primary)', color: 'var(--color-text-inverse)' },
+  [UserRole.MEMBER]: { background: 'var(--color-bg-soft)', color: 'var(--color-text-secondary)' },
+}
+
+function getRoleText(role: UserRole): string {
+  return RoleTextMap[role] ?? '成员'
+}
+
+function getRoleTagStyle(role: UserRole) {
+  return RoleStyleMap[role]
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -23,30 +44,6 @@ const sortedMemberList = computed(() => {
 
   return [...groupDetail.value.memberList].sort((a, b) => a.role - b.role)
 })
-
-function getRoleText(role: number): string {
-  switch (role) {
-    case 0:
-      return '创建者'
-    case 1:
-      return '管理员'
-    case 2:
-      return '成员'
-    default:
-      return '成员'
-  }
-}
-
-function getRoleTagStyle(role: number) {
-  switch (role) {
-    case 0:
-      return { background: 'var(--color-accent)', color: 'var(--color-text-inverse)' }
-    case 1:
-      return { background: 'var(--color-primary)', color: 'var(--color-text-inverse)' }
-    default:
-      return { background: 'var(--color-bg-soft)', color: 'var(--color-text-secondary)' }
-  }
-}
 
 function isCurrentUser(member: GroupMember): boolean {
   return member.id === currentUserId.value

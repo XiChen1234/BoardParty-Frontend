@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import ToastMessage from '@/components/Toast/ToastMessage.vue'
+import ToastMessage from '@/components/toast/ToastMessage.vue'
 import type { ToastOptions } from '@/types/toastType'
 
 type ToastInstance = {

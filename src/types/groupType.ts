@@ -45,7 +45,7 @@ export interface GroupMember {
   nickname: string
   avatarUrl: string
   gender: number
-  role: number
+  role: UserRole
 }
 
 /**
@@ -58,7 +58,7 @@ export interface GroupDetail {
   description: string
   memberCount: number
   memberList: GroupMember[]
-  userRole: number
+  userRole: UserRole
   joinTime: string
 }
 
@@ -69,13 +69,4 @@ export interface GroupCreateRequest {
   name: string
   avatarUrl?: string
   description?: string
-}
-
-/**
- * API 响应格式
- */
-export interface ApiResponse<T> {
-  code: number
-  message: string | null
-  data: T
 }
