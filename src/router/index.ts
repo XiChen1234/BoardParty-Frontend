@@ -4,6 +4,7 @@ import GameWall from '../views/tabView/GameView.vue'
 import Rank from '../views/tabView/RankView.vue'
 import Group from '../views/tabView/GroupView.vue'
 import Profile from '../views/tabView/ProfileView.vue'
+import GroupDetailView from '../views/GroupDetailView.vue'
 import PunishmentView from '../views/PunishmentView.vue'
 import LoginView from '../views/LoginView.vue'
 
@@ -40,16 +41,23 @@ const router = createRouter({
           meta: { title: '小圈' },
         },
         {
+          path: 'profile',
+          name: 'profile',
+          component: Profile,
+          meta: { title: '我的' },
+        },
+        // 以下是不带tab的页面
+        {
           path: 'punishment',
           name: 'punishment',
           component: PunishmentView,
           meta: { title: '惩罚' },
         },
         {
-          path: 'profile',
-          name: 'profile',
-          component: Profile,
-          meta: { title: '我的' },
+          path: 'group/:id',
+          name: 'group-detail',
+          component: GroupDetailView,
+          meta: { title: '小圈详情' },
         },
       ],
     },
