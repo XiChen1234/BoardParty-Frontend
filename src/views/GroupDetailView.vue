@@ -21,22 +21,7 @@ const currentUserId = computed(() => userStore.userInfo?.id)
 const sortedMemberList = computed(() => {
   if (!groupDetail.value?.memberList) return []
 
-  const members = [...groupDetail.value.memberList]
-  const currentUser = members.find(m => m.id === currentUserId.value)
-  const otherMembers = members.filter(m => m.id !== currentUserId.value)
-
-  const sortedOthers = otherMembers.sort((a, b) => a.role - b.role)
-
-  if (currentUser) {
-    const insertIndex = sortedOthers.findIndex(m => m.role !== currentUser.role)
-    if (insertIndex === -1) {
-      sortedOthers.push(currentUser)
-    } else {
-      sortedOthers.splice(insertIndex, 0, currentUser)
-    }
-  }
-
-  return sortedOthers
+  return [...groupDetail.value.memberList].sort((a, b) => a.role - b.role)
 })
 
 function getRoleText(role: number): string {
