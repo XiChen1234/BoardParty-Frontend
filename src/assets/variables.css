@@ -34,7 +34,7 @@
   /* 状态颜色 */
   --red-500: #c75047;
   --red-100: #fbeae9;
-  --blue-500: #7ba3bd;
+  --blue-500-2: #7ba3bd;
   --green-400: #7eb8a0;
 
   /* 醒目颜色 */
@@ -59,7 +59,7 @@
   --color-success: var(--green-500);
 
   /* 卡片按钮背景色 */
-  --color-card-btn-primary: var(--blue-500);
+  --color-card-btn-primary: var(--blue-500-2);
   --color-card-btn-secondary: var(--green-400);
 
   /* 页面背景 */
