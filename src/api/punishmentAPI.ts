@@ -7,7 +7,7 @@ import type { Punishment } from '@/types/punishmentType'
  * * @returns 随机的公共惩罚
  */
 export function getPublicPunishment(): Promise<CommonResponse<Punishment>> {
-  return request.get('punishments/public/random')
+  return request.get('/punishments/public/random')
 }
 
 /**
