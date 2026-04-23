@@ -104,6 +104,17 @@
   --button-primary-text: var(--color-text-inverse);
   --button-primary-bg-disabled: var(--gray-500);
 
+  /* 次要按钮 */
+  --button-secondary-bg: var(--blue-50);
+  --button-secondary-border: var(--blue-200);
+  --button-secondary-hover: var(--blue-100);
+  --button-secondary-text: var(--color-primary);
+
+  /* 危险按钮 */
+  --button-danger-bg: var(--color-danger);
+  --button-danger-hover: var(--red-100);
+  --button-danger-text: var(--color-text-inverse);
+
   /* 输入框组件 */
   --input-bg: var(--gray-0);
   --input-border: var(--color-border);

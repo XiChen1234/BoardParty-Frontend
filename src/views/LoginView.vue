@@ -5,6 +5,7 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import PageLoading from '@/components/loading/PageLoading.vue';
 import { toast } from '@/utils/toast';
+import { FormInput, FormCheckbox, BaseButton } from '@/components/form'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -66,31 +67,20 @@ function validateForm(): boolean {
         </div>
 
         <form class="login-form" @submit.prevent="handleLogin">
-          <div class="form-group">
-            <label for="username" class="form-label">用户名 / 邮箱</label>
-            <input id="username" v-model="form.username" type="text" class="form-input"
-              :class="{ 'form-input--error': errors.username }" placeholder="请输入用户名或邮箱" :disabled="isLoading" />
-            <span v-if="errors.username" class="form-error">{{ errors.username }}</span>
-          </div>
+          <FormInput v-model="form.username" label="用户名 / 邮箱" placeholder="请输入用户名或邮箱" :error="errors.username"
+            :disabled="isLoading" />
 
-          <div class="form-group">
-            <label for="password" class="form-label">密码</label>
-            <input id="password" v-model="form.password" type="password" class="form-input"
-              :class="{ 'form-input--error': errors.password }" placeholder="请输入密码" :disabled="isLoading" />
-            <span v-if="errors.password" class="form-error">{{ errors.password }}</span>
-          </div>
+          <FormInput v-model="form.password" type="password" label="密码" placeholder="请输入密码" :error="errors.password"
+            :disabled="isLoading" />
 
           <div class="form-options">
-            <label class="checkbox-wrapper">
-              <input v-model="form.rememberLogin" type="checkbox" class="checkbox-input" :disabled="isLoading" />
-              <span class="checkbox-label">记住登录状态</span>
-            </label>
+            <FormCheckbox v-model="form.rememberLogin" label="记住登录状态" :disabled="isLoading" />
             <a href="#" class="link-forgot">忘记密码？</a>
           </div>
 
-          <button type="submit" class="btn-login" :disabled="isLoading">
+          <BaseButton type="submit" variant="primary" size="large" :loading="isLoading" :disabled="isLoading">
             登 录
-          </button>
+          </BaseButton>
         </form>
 
         <div class="login-footer">
@@ -150,83 +140,11 @@ function validateForm(): boolean {
   gap: 20px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-}
-
-.form-input {
-  width: 100%;
-  height: 44px;
-  padding: 0 16px;
-  font-size: 14px;
-  color: var(--color-text-primary);
-  background: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  box-sizing: border-box;
-}
-
-.form-input::placeholder {
-  color: var(--color-text-placeholder);
-}
-
-.form-input:focus {
-  border-color: var(--input-focus-border);
-  box-shadow: 0 0 0 3px rgba(58, 95, 122, 0.15);
-}
-
-.form-input--error {
-  border-color: var(--color-danger);
-}
-
-.form-input--error:focus {
-  box-shadow: 0 0 0 3px rgba(199, 80, 71, 0.15);
-}
-
-.form-input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.form-error {
-  font-size: 12px;
-  color: var(--color-danger);
-  margin-top: 4px;
-}
-
 .form-options {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
-}
-
-.checkbox-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.checkbox-input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--color-primary);
-  cursor: pointer;
-}
-
-.checkbox-label {
-  color: var(--color-text-secondary);
 }
 
 .link-forgot {
@@ -239,34 +157,6 @@ function validateForm(): boolean {
 .link-forgot:hover {
   color: var(--color-primary-hover);
   text-decoration: underline;
-}
-
-.btn-login {
-  width: 100%;
-  height: 48px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--button-primary-text);
-  background: var(--button-primary-bg);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
-  margin-top: 8px;
-}
-
-.btn-login:hover {
-  background: var(--button-primary-hover);
-}
-
-.btn-login:active {
-  transform: scale(0.98);
-}
-
-.btn-login:disabled {
-  background: var(--button-primary-hover);
-  cursor: not-allowed;
-  transform: none;
 }
 
 .login-footer {
