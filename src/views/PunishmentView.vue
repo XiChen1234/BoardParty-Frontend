@@ -46,7 +46,6 @@ async function draw() {
     }
     punishment.value = DEFAULT_PUNISHMENT
   } finally {
-    state.value = 'stopped'
     stopSpin()
   }
 }
