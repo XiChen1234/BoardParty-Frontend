@@ -9,9 +9,6 @@ import { useUserStore } from '@/store/userStore'
 const request: AxiosInstance = axios.create({
   baseURL: '/board-party/api',
   timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 })
 
 /**

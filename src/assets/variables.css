@@ -43,6 +43,12 @@
   --warn: #faad14;
   --error: #ff4d4f;
 
+  /* 半透明 */
+  --transparent-10: rgba(0, 0, 0, 0.1);
+  --transparent-30: rgba(0, 0, 0, 0.3);
+  --transparent-60: rgba(0, 0, 0, 0.6);
+  --transparent-90: rgba(0, 0, 0, 0.9);
+
   /* ====================================
      二、语义变量（Semantic）
      页面开发时主要使用这一层变量
