@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import ContentLoading from '@/components/loading/ContentLoading.vue';
 import { useUserStore } from '@/store/userStore';
-import { computed, onMounted, ref } from 'vue'
+import type { CommonError } from '@/types/apiType';
+import { toast } from '@/utils/toast';
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
 const userStore = useUserStore()
-const isLogin = computed(() => userStore.token) // 根据token判断是否已经登录
 const userInfo = computed(() => userStore.userInfo) // 获取用户信息
 const avatarLoadFailed = ref(false) // 头像加载失败状态
 // 头像文本显示
@@ -14,7 +15,8 @@ const avatarText = computed(() => {
   if (userInfo.value?.avatarUrl && !avatarLoadFailed.value) {
     return ''
   }
-  return userInfo.value?.nickname?.charAt(0) || 'U'
+  const name = userInfo.value?.nickname || ''
+  return name ? name.charAt(0) : 'U'
 })
 
 function handleLogin() {
@@ -30,23 +32,30 @@ function handleAvatarError() {
 // loading相关
 const loading = ref(false)
 onMounted(async () => {
-  if (!isLogin.value || userInfo.value?.id) {
-    return
-  }
+  if (userInfo.value) return // 已登录，无需获取用户信息
+  if (!userStore.token) return // 未登录，无需获取用户信息
 
   loading.value = true
   try {
     await userStore.fetchUserInfoAction()
+  } catch (error) {
+    const e = error as CommonError
+    console.error('获取用户信息失败:', e)
+    toast.error(e.message || '获取用户信息失败，请重新登录')
   } finally {
     loading.value = false
   }
+})
+
+watch(() => userInfo.value?.avatarUrl, () => {
+  avatarLoadFailed.value = false
 })
 </script>
 
 <template>
   <div class="profile-page">
     <ContentLoading :show="loading"></ContentLoading>
-    <div v-if="!isLogin">
+    <div v-if="!userInfo">
       <div class="profile-header">
         <div class="avatar-wrapper">
           <div class="avatar">
@@ -64,7 +73,7 @@ onMounted(async () => {
       <div class="profile-header">
         <div class="avatar-wrapper">
           <div class="avatar">
-            <img v-if="userInfo?.avatarUrl && !avatarLoadFailed" :src="userInfo.avatarUrl" alt="avatar"
+            <img v-if="userInfo && userInfo.avatarUrl && !avatarLoadFailed" :src="userInfo.avatarUrl" alt="avatar"
               class="avatar-img" @error="handleAvatarError" />
             <span v-else class="avatar-placeholder">{{ avatarText }}</span>
           </div>

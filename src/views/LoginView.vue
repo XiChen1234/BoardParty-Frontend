@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router';
 import PageLoading from '@/components/loading/PageLoading.vue';
 import { toast } from '@/utils/toast';
 import { FormInput, FormCheckbox, BaseButton } from '@/components/form'
+import type { CommonError } from '@/types/apiType';
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -20,32 +21,45 @@ const errors = reactive({
   password: '',
 })
 
+/**
+ * 处理登录提交
+ * 验证表单，调用登录接口，成功后跳转到列表页
+ * 失败后显示错误提示
+ * @param event 登录表单提交事件
+ */
 async function handleLogin() {
   if (!validateForm()) {
     return
   }
+  errors.username = ''
+  errors.password = ''
   isLoading.value = true
 
   try {
-    const request: LoginRequest = {
+    const payload: LoginRequest = {
       username: form.username.trim(),
       password: form.password,
     }
-    await userStore.loginAction(request, form.rememberLogin)
+
+    await userStore.loginAction(payload, form.rememberLogin)
+
     router.push('/list')
-    toast.success('欢迎您，' + userStore.userInfo?.username)
+    toast.success('欢迎您，' + (userStore.userInfo?.username || '尊敬的用户'))
   } catch (error) {
-    console.error('登陆失败:', error)
-    toast.error('登录失败，请检查用户名和密码')
+    const e = error as CommonError
+    console.error('登陆失败:', e)
+    toast.error(e.message || '登录失败，请检查用户名和密码')
   } finally {
     isLoading.value = false
   }
 }
 
+/**
+ * 验证登录表单
+ * 检查用户名和密码是否为空
+ * @returns 如果用户名和密码都非空，返回true，否则返回false
+ */
 function validateForm(): boolean {
-  errors.username = ''
-  errors.password = ''
-
   if (!form.username.trim()) {
     errors.username = '请输入用户名或邮箱'
   }

@@ -30,15 +30,8 @@ const inputValue = computed({
 <template>
   <div class="form-group">
     <label v-if="label" for="form-input" class="form-label">{{ label }}</label>
-    <input
-      id="form-input"
-      v-model="inputValue"
-      :type="type"
-      class="form-input"
-      :class="{ 'form-input--error': error }"
-      :placeholder="placeholder"
-      :disabled="disabled"
-    />
+    <input id="form-input" v-model="inputValue" :type="type" class="form-input" :class="{ 'form-input--error': error }"
+      :placeholder="placeholder" :disabled="disabled" />
     <span v-if="error" class="form-error">{{ error }}</span>
   </div>
 </template>
@@ -47,13 +40,13 @@ const inputValue = computed({
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
 .form-label {
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-primary);
+  margin-bottom: 4px;
 }
 
 .form-input {
@@ -95,6 +88,5 @@ const inputValue = computed({
 .form-error {
   font-size: 12px;
   color: var(--color-danger);
-  margin-top: 4px;
 }
 </style>

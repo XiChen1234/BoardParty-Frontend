@@ -25,13 +25,15 @@
 **文件**：[toast.ts#L2](file:///c:/Document/Project/BoardProject/BoardParty-Frontend/src/utils/toast.ts#L2)
 
 **修复前**:
+
 ```typescript
-import ToastMessage from '@/components/Toast/ToastMessage.vue'  // ❌ 大写
+import ToastMessage from '@/components/Toast/ToastMessage.vue' // ❌ 大写
 ```
 
 **修复后**:
+
 ```typescript
-import ToastMessage from '@/components/toast/ToastMessage.vue'  // ✅ 小写
+import ToastMessage from '@/components/toast/ToastMessage.vue' // ✅ 小写
 ```
 
 **状态**: ✅ 已修复
@@ -45,10 +47,12 @@ import ToastMessage from '@/components/toast/ToastMessage.vue'  // ✅ 小写
 **状态**: ✅ 已完成
 
 **修改文件**:
+
 - [GroupDetailView.vue](file:///c:/Document/Project/BoardParty-Frontend/src/views/GroupDetailView.vue)
 - [groupType.ts](file:///c:/Document/Project/BoardParty-Frontend/src/types/groupType.ts)
 
 **优化前**:
+
 ```typescript
 function getRoleText(role: number): string {
   switch (role) {
@@ -61,6 +65,7 @@ function getRoleText(role: number): string {
 ```
 
 **优化后**:
+
 ```typescript
 const RoleTextMap: Record<UserRole, string> = {
   [UserRole.CREATOR]: '创建者',
@@ -74,12 +79,14 @@ function getRoleText(role: UserRole): string {
 ```
 
 **改动点**:
+
 1. 导入 `UserRole` 枚举
 2. 新增 `RoleTextMap` 和 `RoleStyleMap` 常量Map
 3. 函数参数从 `number` 改为 `UserRole`
 4. `GroupMember.role` 和 `GroupDetail.userRole` 类型从 `number` 改为 `UserRole`
 
 **优化效果**:
+
 - ✅ 消除魔法数字，使用类型安全的枚举
 - ✅ 用 Map 查找替代 switch 语句，代码更简洁
 - ✅ 类型错误在编译时就能发现，而不是运行时
@@ -95,10 +102,11 @@ function getRoleText(role: UserRole): string {
 **修复**: 已统一为 `CommonResponse`，`ApiResponse` 已删除。
 
 **当前 apiType.ts 内容**:
+
 ```typescript
 export interface CommonResponse<T> {
   code: number
-  msg: string | null
+  message: string | null
   data: T | null
 }
 ```
@@ -118,6 +126,7 @@ export interface CommonResponse<T> {
 **修复**: 原有 `console.log(this.userInfo)` 已删除。
 
 **当前代码**:
+
 ```typescript
 await this.fetchUserInfoAction()
 // ✅ 无 console.log
@@ -132,6 +141,7 @@ await this.fetchUserInfoAction()
 **文件**：[PunishmentView.vue#L12](file:///c:/Document/Project/BoardParty-Frontend/src/views/PunishmentView.vue#L12)
 
 **修复前**:
+
 ```typescript
 const MIN_SPIN_TIME = 3000 // 最小旋转时间，单位毫秒
 ```
@@ -147,11 +157,13 @@ const MIN_SPIN_TIME = 3000 // 最小旋转时间，单位毫秒
 **文件**：[GroupDetailView.vue](file:///c:/Document/Project/BoardProject/BoardParty-Frontend/src/views/GroupDetailView.vue)
 
 **优化**: 在组件顶部统一解析一次：
+
 ```typescript
 const groupId = computed(() => Number(route.params.id))
 ```
 
 **修改点**:
+
 - `goToList()`: 使用 `groupId.value`
 - `goToRank()`: 使用 `groupId.value`
 - `onMounted()`: 使用 `groupId.value`
@@ -190,11 +202,13 @@ export function removeToken(): void {
 ```
 
 **修改点**:
+
 - 新增 `src/utils/storage.ts` 统一管理 token
 - `request.ts` 导入 `getToken()` 替代直接读取 localStorage/sessionStorage
 - `userStore.ts` 导入 `getToken()`, `setToken()`, `removeToken()` 替代分散的存储逻辑
 
 **优化效果**:
+
 - ✅ 消除重复代码，DRY原则
 - ✅ 统一 token 管理逻辑，便于维护
 - ✅ 集中化存储操作，未来可扩展（如加密存储）
@@ -252,29 +266,29 @@ line-clamp: 3;
 
 ## 📊 优化优先级建议
 
-| 优先级 | 问题 | 工作量 | 状态 |
-|--------|------|--------|------|
-| P0 | storage.ts 空文件 | 低 | ✅ 已完成（已删除） |
-| P0 | Toast 导入路径大小写 | 低 | ✅ 已完成 |
-| P1 | 类型使用混乱（魔法数字） | 中 | ✅ 已完成 |
-| P1 | 重复的 API 响应类型 | 低 | ✅ 已完成 |
-| P2 | console.log 残留 | 低 | ✅ 已完成 |
-| P2 | 硬编码数字无注释 | 低 | ✅ 已完成 |
-| P2 | 路由参数重复解析 | 低 | ✅ 已完成 |
-| P3 | token 读取重复 | 低 | ✅ 已完成 |
-| P3 | 未实现功能 | 低 | ❌ 待优化 |
-| P3 | 硬编码注册链接 | 低 | ❌ 待优化 |
+| 优先级 | 问题                     | 工作量 | 状态                |
+| ------ | ------------------------ | ------ | ------------------- |
+| P0     | storage.ts 空文件        | 低     | ✅ 已完成（已删除） |
+| P0     | Toast 导入路径大小写     | 低     | ✅ 已完成           |
+| P1     | 类型使用混乱（魔法数字） | 中     | ✅ 已完成           |
+| P1     | 重复的 API 响应类型      | 低     | ✅ 已完成           |
+| P2     | console.log 残留         | 低     | ✅ 已完成           |
+| P2     | 硬编码数字无注释         | 低     | ✅ 已完成           |
+| P2     | 路由参数重复解析         | 低     | ✅ 已完成           |
+| P3     | token 读取重复           | 低     | ✅ 已完成           |
+| P3     | 未实现功能               | 低     | ❌ 待优化           |
+| P3     | 硬编码注册链接           | 低     | ❌ 待优化           |
 
 ---
 
 ## 📈 完成进度
 
-| 类别 | 数量 | 已完成 | 待优化 |
-|------|------|--------|--------|
-| 严重问题 (P0) | 3 | 2 | 1 |
-| 中等问题 (P1-P2) | 5 | 3 | 2 |
-| 轻微问题 (P3) | 3 | 1 | 2 |
-| **总计** | **11** | **7** | **4** |
+| 类别             | 数量   | 已完成 | 待优化 |
+| ---------------- | ------ | ------ | ------ |
+| 严重问题 (P0)    | 3      | 2      | 1      |
+| 中等问题 (P1-P2) | 5      | 3      | 2      |
+| 轻微问题 (P3)    | 3      | 1      | 2      |
+| **总计**         | **11** | **7**  | **4**  |
 
 **完成率**: 64% (7/11)
 
@@ -283,28 +297,35 @@ line-clamp: 3;
 ## ✅ 已完成的优化
 
 ### 1. Toast 导入路径大小写 - ✅ 已完成
+
 - 修复了 Windows 和 Linux 之间的大小写敏感问题
 - `@/components/Toast/ToastMessage.vue` → `@/components/toast/ToastMessage.vue`
 
 ### 2. 类型使用混乱（魔法数字） - ✅ 已完成
+
 - 使用 `UserRole` 枚举替代魔法数字
 - `GroupMember.role` 和 `GroupDetail.userRole` 类型从 `number` 改为 `UserRole`
 - 用 Map 查找替代 switch 语句
 
 ### 3. 重复的 API 响应类型 - ✅ 已完成
+
 - 统一为 `CommonResponse`，删除重复的 `ApiResponse`
 
 ### 4. console.log 调试代码残留 - ✅ 已完成
+
 - 删除了 `userStore.ts` 中的调试日志
 
 ### 5. 硬编码数字无注释 - ✅ 已完成
+
 - `MIN_SPIN_TIME = 3000` 已添加注释说明
 
 ### 6. 路由参数重复解析 - ✅ 已完成
+
 - 使用 `computed(() => Number(route.params.id))` 统一解析 groupId
 - 消除 goToList、goToRank、onMounted 中的重复解析
 
 ### 7. token 读取逻辑重复 - ✅ 已完成
+
 - 创建统一的 `storage.ts` 工具文件
 - 提供 `getToken()`, `setToken()`, `removeToken()` 三个函数
 - `request.ts` 和 `userStore.ts` 均使用统一函数管理 token

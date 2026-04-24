@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import request from '@/api/request'
+import request from '@/utils/request'
 import { toast } from '@/utils/toast'
 import type { CommonResponse } from '@/types/apiType'
 
@@ -138,8 +138,8 @@ async function uploadFile(file: File) {
     }
   } catch (error) {
     uploadStatus.value = 'error'
-    const err = error as { response?: { data?: { msg?: string } }; message?: string }
-    const message = err.response?.data?.msg || err.message || '上传失败，请重试'
+    const err = error as { response?: { data?: { message?: string } }; message?: string }
+    const message = err.response?.data?.message || err.message || '上传失败，请重试'
     errorMessage.value = message
     emit('upload-error', message)
   }

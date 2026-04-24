@@ -1,5 +1,4 @@
-import request from '@/api/request'
-import type { CommonResponse } from '@/types/apiType'
+import request from '@/utils/request'
 import type { GroupListItem, GroupCreateRequest, GroupDetail } from '@/types/groupType'
 
 /**
@@ -8,7 +7,7 @@ import type { GroupListItem, GroupCreateRequest, GroupDetail } from '@/types/gro
  * @param data 小圈创建信息
  * @returns 小圈ID
  */
-export function createGroup(data: GroupCreateRequest): Promise<CommonResponse<number>> {
+export function createGroup(data: GroupCreateRequest): Promise<number> {
   return request.post('/group/create', data)
 }
 
@@ -17,7 +16,7 @@ export function createGroup(data: GroupCreateRequest): Promise<CommonResponse<nu
  * 获取用户加入的小圈列表
  * @returns 用户加入的小圈列表
  */
-export function getUserGroups(): Promise<CommonResponse<GroupListItem[]>> {
+export function getUserGroups(): Promise<GroupListItem[]> {
   return request.get('/groups/me')
 }
 
@@ -27,6 +26,6 @@ export function getUserGroups(): Promise<CommonResponse<GroupListItem[]>> {
  * @param id 小圈ID
  * @returns 小圈详情
  */
-export function getGroupDetail(id: number): Promise<CommonResponse<GroupDetail>> {
+export function getGroupDetail(id: number): Promise<GroupDetail> {
   return request.get(`/groups/${id}`)
 }

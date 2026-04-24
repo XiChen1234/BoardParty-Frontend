@@ -38,7 +38,7 @@ async function fetchGroupList() {
     if (res.code === 0 && res.data) {
       groupList.value = res.data
     } else {
-      error.value = res.msg || '获取小圈列表失败'
+      error.value = res.message || '获取小圈列表失败'
     }
   } catch (e) {
     error.value = '网络错误，请稍后重试'

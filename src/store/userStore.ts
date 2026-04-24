@@ -1,7 +1,6 @@
 import { login } from '@/api/authAPI'
 import { getUserInfo } from '@/api/userAPI'
-import type { CommonResponse } from '@/types/apiType'
-import type { LoginRequest, LoginResponse } from '@/types/authType'
+import type { LoginRequest } from '@/types/authType'
 import type { UserInfo } from '@/types/userType'
 import { defineStore } from 'pinia'
 import { getToken, setToken, removeToken } from '@/utils/storage'
@@ -19,11 +18,9 @@ export const useUserStore = defineStore('user', {
      * @param rememberLogin 是否记住登录状态，记住后会将token存储在localStorage，否则存储在sessionStorage
      */
     async loginAction(request: LoginRequest, rememberLogin: boolean) {
-      const res: CommonResponse<LoginResponse> = await login(request)
-      if (res.code !== 0 || !res.data) {
-        throw new Error(res.msg || '登录失败')
-      }
-      const token = res.data.token
+      const data = await login(request)
+
+      const token = data.token
       this.token = token
       setToken(token, rememberLogin)
 
@@ -40,12 +37,8 @@ export const useUserStore = defineStore('user', {
       removeToken()
     },
     async fetchUserInfoAction() {
-      const res: CommonResponse<UserInfo> = await getUserInfo()
-      if (res.code !== 0 || !res.data) {
-        this.userInfo = null
-        throw new Error(res.msg || '获取用户信息失败')
-      }
-      this.userInfo = res.data
+      const data = await getUserInfo()
+      this.userInfo = data
     },
   },
 })
