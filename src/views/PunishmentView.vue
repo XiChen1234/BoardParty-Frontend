@@ -36,7 +36,8 @@ async function draw() {
   // 等待API返回和旋转时间结束
   try {
     const [result] = await Promise.all([apiPromise, spinTimer])
-    punishment.value = result.data ?? DEFAULT_PUNISHMENT
+    console.log(result)
+    punishment.value = result ?? DEFAULT_PUNISHMENT
   } catch (error) {
     console.error('抽取公共惩罚失败:', error)
     toast.error('抽取失败，将使用默认惩罚')
