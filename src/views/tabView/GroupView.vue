@@ -6,6 +6,8 @@ import type { GroupListItem } from '@/types/groupType'
 import { getUserGroups } from '@/api/groupAPI'
 import GroupListItemComponent from '@/components/group/GroupListItem.vue'
 import ContentLoading from '@/components/loading/ContentLoading.vue'
+import { toast } from '@/utils/toast'
+import type { CommonError } from '@/types/apiType'
 
 const router = useRouter()
 const filterType = ref<GroupFilterType>(GroupFilterType.ALL)
@@ -35,14 +37,10 @@ async function fetchGroupList() {
   error.value = null
   try {
     const res = await getUserGroups()
-    if (res.code === 0 && res.data) {
-      groupList.value = res.data
-    } else {
-      error.value = res.message || '获取小圈列表失败'
-    }
-  } catch (e) {
-    error.value = '网络错误，请稍后重试'
-    console.error('获取小圈列表失败:', e)
+    groupList.value = res
+  } catch (error) {
+    const e = error as CommonError
+    toast.error(e.message || '获取小圈列表失败')
   } finally {
     loading.value = false
   }

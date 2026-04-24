@@ -6,6 +6,8 @@ import { useUserStore } from '@/store/userStore'
 import { UserRole } from '@/types/groupType'
 import type { GroupDetail, GroupMember } from '@/types/groupType'
 import ContentLoading from '@/components/loading/ContentLoading.vue'
+import type { CommonError } from '@/types/apiType'
+import { toast } from '@/utils/toast'
 
 const RoleTextMap: Record<UserRole, string> = {
   [UserRole.CREATOR]: '创建者',
@@ -74,10 +76,11 @@ onMounted(async () => {
 
   loading.value = true
   try {
-    const res = await getGroupDetail(groupId.value)
-    if (res.code === 0 && res.data) {
-      groupDetail.value = res.data
-    }
+    const data = await getGroupDetail(groupId.value)
+    groupDetail.value = data
+  } catch (error) {
+    const e = error as CommonError
+    toast.error(e.message || '获取小圈详情失败')
   } finally {
     loading.value = false
   }
