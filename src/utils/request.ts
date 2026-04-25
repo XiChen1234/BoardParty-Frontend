@@ -62,7 +62,7 @@ request.interceptors.response.use(
 
     switch (status) {
       case 401:
-        message = '登录已过期'
+        message = '登录已过期，请重新登录'
         useUserStore().logoutAction()
         break
       case 403:
