@@ -12,9 +12,9 @@ const showPunishment = ref<Punishment | null>(null)
 const MIN_SPIN_TIME = 3000 // 最小旋转时间，单位毫秒
 const DEFAULT_PUNISHMENT: Punishment = {
   id: 1,
-  icon: '🍺',
-  name: '干杯一杯',
-  content: '举起你的酒杯，为这场失败干一杯！'
+  icon: '🤡',
+  name: '表情包模仿',
+  content: '摇一个骰子，根据骰子上的数字，翻开你的微信聊天表情包，找到第{n}个表情包，然后模仿其中的动作和表情，让全场笑到肚子疼！'
 } // 默认惩罚
 
 /**
